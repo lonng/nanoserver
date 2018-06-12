@@ -1,0 +1,35 @@
+To create a fresh builder host:  (should only be needed once)
+
+Create a new Scaleway server with type "Docker 1.5" (second tab).
+
+Make a tmpfs:
+# echo "tmpfs /tmpfs tmpfs" >> /etc/fstab
+# mkdir /tmpfs
+
+Make a 2GB swap file:
+# dd if=/dev/zero of=/swap count=2097152 obs=1024
+# mkswap /swap
+# chmod 0600 /swap
+# echo "/swap none swap loop 0 0" >> /etc/fstab
+
+Reboot.
+
+Should see swaps in "cat /proc/swaps" and tmpfs in "cat /proc/mounts" now.
+
+* Copy the contents of this directory to the server.
+
+* Go into that directory and:
+  # docker build -t buildlet .
+
+Add to /etc/rc.local:
+
+  (mkdir -p /tmpfs/buildertmp && docker run -e BUILDKEY_ARM=xxx -e BUILDKEY_ARM5=xxx -v=/tmpfs/buildertmp:/tmp --restart=always -d --name=buildlet buildlet) &
+  sleep 5
+
+.. before the exit 0
+
+Power it down (with ARCHIVE),
+
+Snapshot the disk.
+
+Start a bunch of them. (see golang.org/x/build/cmd/scaleway)

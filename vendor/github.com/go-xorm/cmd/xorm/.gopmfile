@@ -1,0 +1,11 @@
+[deps]
+github.com/go-xorm/xorm = 
+github.com/go-sql-driver/mysql = 
+github.com/go-xorm/core = 
+github.com/go-xweb/log = 
+github.com/lib/pq = 
+github.com/ziutek/mymysql = 
+
+[res]
+include = templates
+

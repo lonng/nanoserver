@@ -1,0 +1,16 @@
+# See NOTES files
+
+[Unit]
+Description=Go builder buildlet
+After=network.target
+
+[Install]
+WantedBy=network-online.target
+
+[Service]
+Type=simple
+ExecStartPre=/bin/sh -c '/usr/bin/curl -f -o /usr/local/bin/buildlet-stage0 https://storage.googleapis.com/go-builder-data/buildlet-stage0.linux-arm-scaleway?$(date +%s) && chmod +x /usr/local/bin/buildlet-stage0'
+ExecStart=/usr/local/bin/buildlet-stage0
+Restart=always
+RestartSec=2
+StartLimitInterval=0

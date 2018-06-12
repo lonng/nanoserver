@@ -1,0 +1,7 @@
+{
+  "version": "1.9.3",
+  "patch": 6,
+  "android": "https://fir.im/tand",
+  "ios": "https://fir.im/tios",
+  "download": "http://39.108.135.229:12307/static/update/v1.9.3.kl.6.patch"
+}

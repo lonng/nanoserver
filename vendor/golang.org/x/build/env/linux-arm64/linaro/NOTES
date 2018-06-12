@@ -1,0 +1,44 @@
+Installing one of the linaro machines,
+
+Currently:
+
+Host arm64-go-1
+    User brad.fitzpatrick
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+    ProxyCommand ssh -A brad.fitzpatrick@aus-colo.linaro.org nc -q0 r2-a25-go1 %p
+Host arm64-go-2
+    User brad.fitzpatrick
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+    ProxyCommand ssh -A brad.fitzpatrick@aus-colo.linaro.org nc -q0 r2-a25-go2 %p
+Host arm64-go-3
+    User brad.fitzpatrick
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+    ProxyCommand ssh -A brad.fitzpatrick@aus-colo.linaro.org nc -q0 r2-a25-go3 %p
+Host arm64-go-4
+    User brad.fitzpatrick
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+    ProxyCommand ssh -A brad.fitzpatrick@aus-colo.linaro.org nc -q0 r2-a25-go4 %p
+Host arm64-go-5
+    User brad.fitzpatrick
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+    ProxyCommand ssh -A brad.fitzpatrick@aus-colo.linaro.org nc -q0 r1-a4-go5 %p
+
+... which permit ssh public key:
+
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDnW173QBalrgEiAf6NTEkB+Mi/jO1g+y6p0irn1KJ81gNaMAgbRIbNSARBGDLm0TcNCGRwmKCIQZLSPgXdIRf7wHr9vZWLUvSYTExTU839XxlazhV8LW4jj8qLd78JA4oEnsTVFgMnSbQ1wqk4CMU8/PGK+wEJr9aZ3LUoATCfgJJfqOMq51zzcvLWN9H3QDwVwL9kECgqFnfetwZ+Ie0dLo8oUsLUei0+ajWPwjMFBm8jcuEd3X+CCKkTWe9z7UaKqQWtYkaNFjUs5cQG8ycLcYrgdSAUEiw8PKvf8CDOpSmONOAr/boY8V2V9iCBZiHVKl05bdkl+KRB9B85fVA7 bradfitz@laptop
+
+For each node above: (sadly, not automated)
+
+- cp sources.list to /etc/apt/sources.list
+# apt-get update
+
+- Put builder key for "linux-arm64-buildlet" at /root/.gobuildkey
+- Put buildlet.service at /etc/systemd/system/
+# systemctl enable buildlet.service
+# systemctl start buildlet.service
+

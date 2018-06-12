@@ -1,0 +1,4 @@
+#!/bin/sh -e
+
+start-stop-daemon --start --exec=/usr/local/bin/stage0 --background /usr/local/bin/stage0 -- --network-wait=15s
+exit 0

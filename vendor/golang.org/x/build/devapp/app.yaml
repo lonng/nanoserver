@@ -1,0 +1,27 @@
+# Update with
+#	google_appengine/appcfg.py [-V dev-test] update .
+#
+# Using -V dev-test will run as dev-test.dev.golang.org.
+
+application: golang-org
+module: dev
+version: main
+runtime: go
+api_version: go1
+
+handlers:
+- url: /
+  static_files: static/index.html
+  upload: static/index.html
+  secure: always
+- url: /(|release|cl)
+  script: _go_app
+  secure: always
+- url: /update
+  script: _go_app
+  login: admin
+  secure: always
+- url: /setToken
+  script: _go_app
+  login: admin
+  secure: always
