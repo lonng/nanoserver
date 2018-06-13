@@ -23,6 +23,21 @@
 8. 房间整体流程(玩家开房/俱乐部开房/玩家邀请/解散房间)
 9. ... ...
 
+## `Nano`文档
+
+- English
+    + [How to build your first nano application](https://github.com/lonnng/nano/blob/master/docs/get_started.md)
+    + [Route compression](https://github.com/lonnng/nano/blob/master/docs/route_compression.md)
+    + [Communication protocol](https://github.com/lonnng/nano/blob/master/docs/communication_protocol.md)
+    + [Design patterns](https://github.com/lonnng/nano/blob/master/docs/design_patterns.md)
+    + [API Reference(Server)](https://godoc.org/github.com/lonnng/nano)
+
+- 简体中文
+    + [如何构建你的第一个nano应用](https://github.com/lonnng/nano/blob/master/docs/get_started_zh_CN.md)
+    + [路由压缩](https://github.com/lonnng/nano/blob/master/docs/route_compression_zh_CN.md)
+    + [通信协议](https://github.com/lonnng/nano/blob/master/docs/communication_protocol_zh_CN.md)
+    + [API参考(服务器)](https://godoc.org/github.com/lonnng/nano)
+
 ## 源码编译
 
 ```bash
