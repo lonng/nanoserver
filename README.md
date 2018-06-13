@@ -2,7 +2,7 @@
 
 **申明: 本代码开源的目的在于作为`Nano`的示例用于学习, 使用者的其他行为与作者无关**
 
-**交流群(QQGroup): ![](http//pub.idqqimg.com/wpa/images/group.png)  [289680347](http//shang.qq.com/wpa/qunwpa?idkey=24e06c02d306f6559528e8434b3b54ed049628fdba4c5dcbcfe9f0e2f611cf81)**
+**交流群(QQGroup): [![](http://pub.idqqimg.com/wpa/images/group.png "289680347")](http://shang.qq.com/wpa/qunwpa?idkey=24e06c02d306f6559528e8434b3b54ed049628fdba4c5dcbcfe9f0e2f611cf81)**
 
 四川麻将玩法, 血战到底(三人模式/四人模式)服务器程序,  房卡模式, 支持俱乐部.
 
