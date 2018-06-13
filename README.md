@@ -47,7 +47,7 @@
 ```bash
 go get github.com/lonnng/nano
 go get github.com/lonnng/nanoserver
-cd $GOPATH/src/github.com/lonng/nanoserver/cmd/mahjong
+cd $GOPATH/src/github.com/lonnng/nanoserver/cmd/mahjong
 go build
 ./mahjong
 ```
