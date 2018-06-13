@@ -43,6 +43,7 @@
 ## 源码编译
 
 ```bash
+go get github.com/lonnng/nano
 go get github.com/lonnng/nanoserver
 cd $GOPATH/src/github.com/lonng/nanoserver/cmd/mahjong
 go build
