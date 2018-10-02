@@ -18,4 +18,3 @@ func BenchmarkCrypto_Outbound(b *testing.B) {
 		c.outbound(nil, payload)
 	}
 }
-

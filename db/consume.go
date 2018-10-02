@@ -1,15 +1,15 @@
 package db
 
 import (
-	"github.com/lonnng/nanoserver/internal/protocol"
+	"github.com/lonnng/nanoserver/db/model"
+	"github.com/lonnng/nanoserver/protocol"
+	log "github.com/sirupsen/logrus"
 	"strconv"
 	"time"
-	log "github.com/sirupsen/logrus"
-	"github.com/lonnng/nanoserver/db/model"
 )
 
 func InsertConsume(entity *model.CardConsume) error {
-	_, err := DB.Insert(entity)
+	_, err := database.Insert(entity)
 	if err != nil {
 		log.Error(err)
 	}
@@ -20,7 +20,7 @@ func InsertConsume(entity *model.CardConsume) error {
 //消耗统计
 func ConsumeStats(from, to int64) ([]*protocol.CardConsume, error) {
 	fn := func(from, to int64) *protocol.CardConsume {
-		mQuery, err := DB.Query("SELECT SUM(card_count) AS cards FROM card_consume WHERE consume_at BETWEEN ? AND ?; ",
+		mQuery, err := database.Query("SELECT SUM(card_count) AS cards FROM card_consume WHERE consume_at BETWEEN ? AND ?; ",
 			from,
 			to)
 

@@ -7,21 +7,21 @@ import (
 	"strconv"
 
 	"github.com/lonnng/nanoserver/db/model"
-	"github.com/lonnng/nanoserver/internal/errutil"
-	"github.com/lonnng/nanoserver/internal/protocol"
+	"github.com/lonnng/nanoserver/pkg/errutil"
+	"github.com/lonnng/nanoserver/protocol"
 )
 
 //QueryUser get the user by id
 func QueryUser(id int64) (*model.User, error) {
 	if id <= 0 {
-		return nil, errutil.YXErrUserNotFound
+		return nil, errutil.ErrUserNotFound
 	}
 	u := &model.User{
 		Id: id,
 	}
-	has, err := DB.Get(u)
+	has, err := database.Get(u)
 	if !has {
-		err = errutil.YXErrUserNotFound
+		err = errutil.ErrUserNotFound
 	}
 
 	if err != nil {
@@ -37,7 +37,7 @@ func UpdateUser(u *model.User) error {
 	if u == nil {
 		return nil
 	}
-	_, err := DB.Where("id=?", u.Id).AllCols().Update(u)
+	_, err := database.Where("id=?", u.Id).AllCols().Update(u)
 	return err
 }
 
@@ -46,7 +46,7 @@ func InsertUser(u *model.User) error {
 	if u == nil {
 		return nil
 	}
-	_, err := DB.Insert(u)
+	_, err := database.Insert(u)
 	return err
 }
 
@@ -55,16 +55,16 @@ func DeleteUser(uid int64) error {
 	u := model.User{
 		Status: StatusDeleted,
 	}
-	_, err := DB.Where("uid=?", uid).Update(u)
+	_, err := database.Where("uid=?", uid).Update(u)
 	return err
 }
 
 func UserAddCoin(uid int64, coin int64) error {
-	session := DB.NewSession()
+	session := database.NewSession()
 	defer session.Close()
 	err := session.Begin()
 	if err != nil {
-		return errutil.YXErrDBOperation
+		return errutil.ErrDBOperation
 	}
 	u := &model.User{Id: uid}
 	has, err := session.Get(u)
@@ -72,7 +72,7 @@ func UserAddCoin(uid int64, coin int64) error {
 		return err
 	}
 	if !has {
-		return errutil.YXErrNotFound
+		return errutil.ErrNotFound
 	}
 	u.Coin += coin
 	_, err = session.Where("uid=?", uid).Update(u)
@@ -88,9 +88,9 @@ func UserLoseCoin(id int64, coin int64) error {
 		Id: id,
 	}
 
-	has, err := DB.Get(user)
+	has, err := database.Get(user)
 	if !has {
-		return errutil.YXErrNotFound
+		return errutil.ErrNotFound
 	}
 	if err != nil {
 		return err
@@ -100,12 +100,12 @@ func UserLoseCoin(id int64, coin int64) error {
 }
 
 func UserLoseCoinByUID(uid int64, coin int64) error {
-	session := DB.NewSession()
+	session := database.NewSession()
 	defer session.Close()
 
 	if err := session.Begin(); err != nil {
 		logger.Error(err.Error())
-		return errutil.YXErrDBOperation
+		return errutil.ErrDBOperation
 	}
 	u := &model.User{Id: uid}
 	has, err := session.Get(u)
@@ -115,11 +115,11 @@ func UserLoseCoinByUID(uid int64, coin int64) error {
 	}
 	if !has {
 		logger.Error("user not found")
-		return errutil.YXErrNotFound
+		return errutil.ErrNotFound
 	}
 	if u.Coin < coin {
 		logger.Error("coin not enough")
-		return errutil.YXErrCoinNotEnough
+		return errutil.ErrCoinNotEnough
 	}
 	u.Coin -= coin
 	//FIXED: 用户剩余1的时候, 扣除不成功
@@ -136,13 +136,9 @@ func InsertRegister(reg *model.Register) {
 	chWrite <- reg
 }
 
-func InsertOperation(op *model.Operation) {
-	chWrite <- op
-}
-
 func userOnline(uid int64) error {
 	u := &model.User{IsOnline: UserOnline, LastLoginAt: time.Now().Unix()}
-	if _, err := DB.Where("id=?", uid).Update(u); err != nil {
+	if _, err := database.Where("id=?", uid).Update(u); err != nil {
 		return err
 	}
 	return nil
@@ -154,25 +150,25 @@ func QueryGuestUser(appId string, imei string) (*model.User, error) {
 		AppId: appId,
 	}
 
-	ok, err := DB.Get(bean)
+	ok, err := database.Get(bean)
 	if err != nil {
 		return nil, err
 	}
 
 	if !ok {
-		return nil, errutil.YXErrUserNotFound
+		return nil, errutil.ErrUserNotFound
 	}
 
 	user := &model.User{
 		Id: bean.Uid,
 	}
-	ok, err = DB.Get(user)
+	ok, err = database.Get(user)
 	if err != nil {
 		return nil, err
 	}
 
 	if !ok {
-		return nil, errutil.YXErrUserNotFound
+		return nil, errutil.ErrUserNotFound
 	}
 
 	return user, nil
@@ -194,20 +190,6 @@ func RegisterUserLog(u *model.User, d protocol.Device, appid string, channelID s
 		RegisterType: regType,
 	}
 	InsertRegister(reg)
-	// Insert user operation record
-	op := &model.Operation{
-		Uid:        u.Id,
-		OperatorId: u.Id,
-		Remote:     d.Remote,
-		Ip:         d.IP,
-		Imei:       d.IMEI,
-		Os:         d.OS,
-		Model:      d.Model,
-		AppId:      appid,
-		OperateAt:  t,
-		Action:     OpActionRegister,
-	}
-	InsertOperation(op)
 }
 
 func InsertLoginLog(uid int64, d protocol.Device, appid string, channelID string) {
@@ -230,14 +212,14 @@ func InsertLoginLog(uid int64, d protocol.Device, appid string, channelID string
 //QueryUserInfo get the user by id
 func QueryUserInfo(id int64) (*protocol.UserStatsInfo, error) {
 	if id <= 0 {
-		return nil, errutil.YXErrUserNotFound
+		return nil, errutil.ErrUserNotFound
 	}
 	u := &model.User{
 		Id: id,
 	}
-	has, err := DB.Get(u)
+	has, err := database.Get(u)
 	if !has {
-		err = errutil.YXErrUserNotFound
+		err = errutil.ErrUserNotFound
 	}
 
 	if err != nil {
@@ -249,21 +231,21 @@ func QueryUserInfo(id int64) (*protocol.UserStatsInfo, error) {
 	r := &model.Register{
 		Uid: u.Id,
 	}
-	DB.Get(r)
+	database.Get(r)
 
 	//登录记录
 	l := &model.Login{
 		Uid: u.Id,
 	}
-	DB.Desc("login_at").Get(l)
+	database.Desc("login_at").Get(l)
 
 	ta := &model.ThirdAccount{
 		Uid: u.Id,
 	}
-	DB.Get(ta)
+	database.Get(ta)
 
 	//总对局数
-	match, _ := DB.Where("player0 =? OR player1 =? OR player2 = ?",
+	match, _ := database.Where("player0 =? OR player1 =? OR player2 = ?",
 		id, id, id).Count(model.Desk{})
 
 	usi := &protocol.UserStatsInfo{
@@ -295,7 +277,7 @@ func QueryUserInfo(id int64) (*protocol.UserStatsInfo, error) {
 	f := func(id, begin, end int64) *protocol.DailyStats {
 		ret := &protocol.DailyStats{}
 		//桌数
-		asCreator, _ := DB.Where("creator = ? AND created_at BETWEEN ? AND ?",
+		asCreator, _ := database.Where("creator = ? AND created_at BETWEEN ? AND ?",
 			id,
 			begin,
 			end).Count(&model.Desk{})
@@ -304,7 +286,7 @@ func QueryUserInfo(id int64) (*protocol.UserStatsInfo, error) {
 
 		//参与过的房号
 		desks := []model.Desk{}
-		DB.Where("(player0 =? OR player1 =? OR player2 = ? ) AND created_at BETWEEN ? AND ?",
+		database.Where("(player0 =? OR player1 =? OR player2 = ? ) AND created_at BETWEEN ? AND ?",
 			id, id, id,
 			begin, end,
 		).Find(&desks)
@@ -359,7 +341,7 @@ func IsUserExists(uid int64) bool {
 	u := &model.User{
 		Id: uid,
 	}
-	has, _ := DB.Get(u)
+	has, _ := database.Get(u)
 	return has
 }
 
@@ -367,16 +349,16 @@ func QueryUserList(offset, count int) ([]model.User, int64, error) {
 	user := &model.User{
 		Status: StatusNormal,
 	}
-	total, err := DB.Count(user)
+	total, err := database.Count(user)
 	if err != nil {
 		logger.Error(err)
-		return nil, 0, errutil.YXErrDBOperation
+		return nil, 0, errutil.ErrDBOperation
 	}
 	result := make([]model.User, 0)
-	err = DB.Where("status=?", StatusNormal).Limit(count, offset).
+	err = database.Where("status=?", StatusNormal).Limit(count, offset).
 		Desc("id").Find(&result)
 	if err != nil {
-		return nil, 0, errutil.YXErrDBOperation
+		return nil, 0, errutil.ErrDBOperation
 	}
 	return result, total, nil
 }
@@ -384,17 +366,17 @@ func QueryUserList(offset, count int) ([]model.User, int64, error) {
 //注册用户数
 func QueryRegisterUsers(begin, end int64) (int, error) {
 	if begin > end {
-		return 0, errutil.YXErrIllegalParameter
+		return 0, errutil.ErrIllegalParameter
 	}
 
 	user := &model.User{
 		Status: StatusNormal,
 	}
 
-	total, err := DB.Where("`register_at` BETWEEN ? AND ?", begin, end).Count(user)
+	total, err := database.Where("`register_at` BETWEEN ? AND ?", begin, end).Count(user)
 	if err != nil {
 		logger.Error(err)
-		return 0, errutil.YXErrDBOperation
+		return 0, errutil.ErrDBOperation
 	}
 
 	return int(total), nil
@@ -404,7 +386,7 @@ func QueryRegisterUsers(begin, end int64) (int, error) {
 //活跃人数
 func QueryActivationUser(from, to int64) ([]*protocol.ActivationUser, error) {
 	fn := func(from, to int64) *protocol.ActivationUser {
-		mQuery, err := DB.Query("SELECT COUNT(DISTINCT(uid)) AS users FROM `login` WHERE login_at BETWEEN ? AND ? ",
+		mQuery, err := database.Query("SELECT COUNT(DISTINCT(uid)) AS users FROM `login` WHERE login_at BETWEEN ? AND ? ",
 			from,
 			to)
 
@@ -443,7 +425,7 @@ func OnlineStatsLite() (*model.Online, error) {
 
 	ol := &model.Online{}
 
-	has, err := DB.Desc("time").Get(ol)
+	has, err := database.Desc("time").Get(ol)
 	if err != nil || !has {
 		return nil, err
 	}
@@ -459,7 +441,7 @@ func retentionHelper(current int) (*retentionStats, error) {
 
 		fmt.Print(sql)
 		fmt.Println(current, current+step)
-		m, err := DB.Query(
+		m, err := database.Query(
 			sql,
 			current,
 			current+dayInSecond,
@@ -493,7 +475,7 @@ func retentionHelper(current int) (*retentionStats, error) {
 
 	sql := fmt.Sprintf("SELECT COUNT(DISTINCT(uid)) AS register FROM `register` WHERE register_at BETWEEN ? AND ? ")
 
-	mQuery, err := DB.Query(
+	mQuery, err := database.Query(
 		sql,
 		current,
 		current+dayInSecond,

@@ -2,28 +2,28 @@ package web
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"strings"
 	"time"
 
-	"errors"
+	"github.com/lonnng/nanoserver/cmd/mahjong/game"
+	"github.com/lonnng/nanoserver/cmd/mahjong/web/api"
+	"github.com/lonnng/nanoserver/db"
+	"github.com/lonnng/nanoserver/pkg/errutil"
+	"github.com/lonnng/nanoserver/protocol"
 	"github.com/lonnng/nex"
 	log "github.com/sirupsen/logrus"
-	"github.com/lonnng/nanoserver/cmd/mahjong/game"
-	"github.com/lonnng/nanoserver/cmd/mahjong/web/service/login"
-	"github.com/lonnng/nanoserver/internal/errutil"
-	"github.com/lonnng/nanoserver/db"
-	"github.com/lonnng/nanoserver/internal/protocol"
 )
 
 func authFilter(_ context.Context, r *http.Request) (context.Context, error) {
 	parts := strings.Split(r.RemoteAddr, ":")
 	if len(parts) < 2 {
-		return context.Background(), errutil.YXErrPermissionDenied
+		return context.Background(), errutil.ErrPermissionDenied
 	}
 
 	if parts[0] != "127.0.0.1" {
-		return context.Background(), errutil.YXErrPermissionDenied
+		return context.Background(), errutil.ErrPermissionDenied
 	}
 
 	return context.Background(), nil
@@ -34,7 +34,7 @@ func broadcast(query *nex.Form) (*protocol.StringMessage, error) {
 	if message == "" || len(message) < 5 {
 		return nil, errors.New("消息不可小于5个字")
 	}
-	login.AddMessage(message)
+	api.AddMessage(message)
 	game.BroadcastSystemMessage(message)
 	return protocol.SuccessMessage, nil
 }
@@ -42,7 +42,7 @@ func broadcast(query *nex.Form) (*protocol.StringMessage, error) {
 func resetPlayerHandler(query *nex.Form) (*protocol.StringMessage, error) {
 	uid := query.Int64OrDefault("uid", -1)
 	if uid <= 0 {
-		return nil, errutil.YXErrIllegalParameter
+		return nil, errutil.ErrIllegalParameter
 	}
 	log.Infof("手动重置玩家数据: Uid=%d", uid)
 	game.Reset(uid)
@@ -52,7 +52,7 @@ func resetPlayerHandler(query *nex.Form) (*protocol.StringMessage, error) {
 func kickHandler(query *nex.Form) (*protocol.StringMessage, error) {
 	uid := query.Int64OrDefault("uid", -1)
 	if uid <= 0 {
-		return nil, errutil.YXErrIllegalParameter
+		return nil, errutil.ErrIllegalParameter
 	}
 
 	log.Infof("踢玩家下线: Uid=%d", uid)
@@ -76,7 +76,7 @@ func onlineHandler(query *nex.Form) (interface{}, error) {
 
 func rechargeHandler(data *protocol.RechargeRequest) (*protocol.StringMessage, error) {
 	if data.Uid < 1 || data.Count < 1 {
-		return nil, errutil.YXErrIllegalParameter
+		return nil, errutil.ErrIllegalParameter
 	}
 	u, err := db.QueryUser(data.Uid)
 	if err != nil {
@@ -100,7 +100,7 @@ func rechargeHandler(data *protocol.RechargeRequest) (*protocol.StringMessage, e
 func cardConsumeHandler(query *nex.Form) (*protocol.StringMessage, error) {
 	consume := query.Get("consume")
 	if consume == "" {
-		return nil, errutil.YXErrIllegalParameter
+		return nil, errutil.ErrIllegalParameter
 	}
 	log.Infof("手动重置房卡消耗数据: %s", consume)
 	game.SetCardConsume(consume)
@@ -109,7 +109,7 @@ func cardConsumeHandler(query *nex.Form) (*protocol.StringMessage, error) {
 func userInfoHandler(query *nex.Form) (interface{}, error) {
 	id := query.Int64OrDefault("id", -1)
 	if id <= 0 {
-		return nil, errutil.YXErrIllegalParameter
+		return nil, errutil.ErrIllegalParameter
 	}
 
 	return db.QueryUserInfo(id)

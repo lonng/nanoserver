@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/lonnng/nanoserver/db"
-	"github.com/lonnng/nanoserver/internal/protocol"
+	"github.com/lonnng/nanoserver/protocol"
 
-	"github.com/lonnng/nanoserver/internal/errutil"
+	"github.com/lonnng/nanoserver/pkg/errutil"
 )
 
 var dayInternal = 24 * 60 * 60
@@ -52,7 +52,7 @@ func retentionHandler(query *nex.Form) (interface{}, error) {
 	to := query.IntOrDefault("to", -1)
 
 	if from < 0 || to < 0 || to < from {
-		return nil, errutil.YXErrIllegalParameter
+		return nil, errutil.ErrIllegalParameter
 	}
 
 	list := []*protocol.Retention{}
@@ -65,32 +65,6 @@ func retentionHandler(query *nex.Form) (interface{}, error) {
 	}
 
 	return &protocol.RetentionResponse{Data: list}, nil
-
-}
-
-//date所在的日，周，月的分数/对战排行的top N
-func rankHandler(query *nex.Form) (interface{}, error) {
-	typ := query.IntOrDefault("order", 1)
-	if typ != db.RankingNormal && typ != db.RankingDesc {
-		typ = db.RankingNormal
-	}
-
-	date := query.Int64OrDefault("date", 0)
-	if date <= 0 {
-		date = time.Now().Unix()
-	}
-
-	n := query.IntOrDefault("n", 10)
-	if n < 0 {
-		n = db.DefaultTopN
-	}
-
-	ret, err := db.RankList(typ, n, date)
-	if err != nil {
-		return nil, err
-	}
-
-	return &protocol.RetentionResponse{Data: ret}, nil
 
 }
 

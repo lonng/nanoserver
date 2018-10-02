@@ -15,7 +15,7 @@ func IsClubMember(clubId, uid int64) bool {
 		Status: model.UserClubStatusAgree,
 	}
 
-	has, err := DB.Get(&uc)
+	has, err := database.Get(&uc)
 	if err != nil {
 		return false
 	}
@@ -24,7 +24,7 @@ func IsClubMember(clubId, uid int64) bool {
 
 func IsBalanceEnough(clubId int64) bool {
 	c := model.Club{ClubId: clubId}
-	has, err := DB.Get(&c)
+	has, err := database.Get(&c)
 	if err != nil {
 		return false
 	}
@@ -40,7 +40,7 @@ func ApplyClub(uid, clubId int64) error {
 	}
 
 	c := &model.Club{ClubId: clubId}
-	ok, err := DB.Get(c)
+	ok, err := database.Get(c)
 	if err != nil {
 		return err
 	}
@@ -55,7 +55,7 @@ func ApplyClub(uid, clubId int64) error {
 		CreatedAt: time.Now().Unix(),
 	}
 
-	ok, err = DB.Get(uc)
+	ok, err = database.Get(uc)
 	if err != nil {
 		return err
 	}
@@ -71,7 +71,7 @@ func ApplyClub(uid, clubId int64) error {
 	}
 
 	uc.Status = model.UserClubStatusApply
-	_, err = DB.Insert(uc)
+	_, err = database.Insert(uc)
 	return err
 }
 
@@ -82,7 +82,7 @@ func ClubList(uid int64) ([]model.Club, error) {
 	}
 
 	list := []model.UserClub{}
-	if err := DB.Find(&list, bean); err != nil {
+	if err := database.Find(&list, bean); err != nil {
 		return nil, err
 	}
 
@@ -96,13 +96,13 @@ func ClubList(uid int64) ([]model.Club, error) {
 	}
 
 	ret := []model.Club{}
-	DB.In("club_id", ids).Find(&ret)
+	database.In("club_id", ids).Find(&ret)
 
 	return ret, nil
 }
 
 func ClubLoseBalance(clubId, balance int64, consume *model.CardConsume) error {
-	session := DB.NewSession()
+	session := database.NewSession()
 	defer session.Close()
 
 	if err := session.Begin(); err != nil {

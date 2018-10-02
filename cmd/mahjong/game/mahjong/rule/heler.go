@@ -4,7 +4,7 @@ import (
 	"sort"
 
 	"github.com/lonnng/nanoserver/cmd/mahjong/game/mahjong"
-	"github.com/lonnng/nanoserver/internal/protocol"
+	"github.com/lonnng/nanoserver/protocol"
 )
 
 func Stats(indexes ...mahjong.Indexes) *mahjong.Stats {

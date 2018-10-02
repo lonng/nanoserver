@@ -6,7 +6,6 @@ type KeyPair struct {
 	PublicKey  string
 }
 
-
 type retentionStats struct {
 	date       int64
 	register   int64 //注册人数

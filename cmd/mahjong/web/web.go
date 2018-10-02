@@ -4,23 +4,15 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-
-	_ "github.com/lonnng/nanoserver/cmd/mahjong/web/provider/yxsdk/payment/test"
-	_ "github.com/lonnng/nanoserver/cmd/mahjong/web/provider/yxsdk/payment/wechat"
-	_ "github.com/lonnng/nanoserver/cmd/mahjong/web/provider/yxsdk/payment/yx"
-	"github.com/lonnng/nanoserver/cmd/mahjong/web/service/desk"
-	"github.com/lonnng/nanoserver/cmd/mahjong/web/service/history"
-	"github.com/lonnng/nanoserver/cmd/mahjong/web/service/login"
-	"github.com/lonnng/nanoserver/cmd/mahjong/web/service/order"
-	"github.com/lonnng/nanoserver/db"
-	"github.com/lonnng/nanoserver/internal/algoutil"
-	"github.com/lonnng/nanoserver/internal/protocol"
-	"github.com/lonnng/nanoserver/internal/whitelist"
-
 	"os"
 	"os/signal"
 	"syscall"
 
+	"github.com/lonnng/nanoserver/cmd/mahjong/web/api"
+	"github.com/lonnng/nanoserver/db"
+	"github.com/lonnng/nanoserver/pkg/algoutil"
+	"github.com/lonnng/nanoserver/pkg/whitelist"
+	"github.com/lonnng/nanoserver/protocol"
 	"github.com/lonnng/nex"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -71,26 +63,15 @@ func logRequest(ctx context.Context, r *http.Request) (context.Context, error) {
 
 func startupService() http.Handler {
 	var (
-		ctx    = context.Background()
 		mux    = http.NewServeMux()
 		webDir = viper.GetString("webserver.static_dir")
-		addr   = viper.GetString("webserver.addr")
 	)
 
-	println("====>", webDir)
-	println("====>", addr)
-
-	//set up services
-	orderService := order.NewService(logger)
-	historyService := history.NewService(logger)
-	deskService := desk.NewService(logger)
-
 	nex.Before(logRequest)
-
-	mux.Handle("/v1/user/", login.MakeHandler())
-	mux.Handle("/v1/order/", order.MakeHandler(ctx, orderService))
-	mux.Handle("/v1/history/", history.MakeHandler(ctx, historyService))
-	mux.Handle("/v1/desk/", desk.MakeHandler(ctx, deskService))
+	mux.Handle("/v1/user/", api.MakeLoginService())
+	mux.Handle("/v1/order/", api.MakeOrderService())
+	mux.Handle("/v1/history/", api.MakeHistoryService())
+	mux.Handle("/v1/desk/", api.MakeDeskService())
 	mux.Handle("/v1/version", nex.Handler(version))
 
 	// GM系统命令
@@ -103,12 +84,10 @@ func startupService() http.Handler {
 	mux.Handle("/v1/gm/query/user/", nex.Handler(userInfoHandler))                   // 玩家信息查询
 
 	//统计后台
-
 	mux.Handle("/v1/stats/user/register", nex.Handler(registerUsersHandler).Before(authFilter))     // 注册人数
 	mux.Handle("/v1/stats/user/activation", nex.Handler(activationUsersHandler).Before(authFilter)) // 活跃人数
 	mux.Handle("/v1/stats/online", nex.Handler(onlineLiteHandler).Before(authFilter))               // 同时在线人、桌数
 	mux.Handle("/v1/stats/retention", nex.Handler(retentionHandler).Before(authFilter))             // 留存
-	mux.Handle("/v1/stats/rank", nex.Handler(rankHandler).Before(authFilter))                       // 分数,对局排名
 	mux.Handle("/v1/stats/consume", nex.Handler(cardConsumeStatsHandler).Before(authFilter))        // 房卡消耗
 
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir(webDir))))
@@ -132,6 +111,7 @@ func Startup() {
 		enableSSL = viper.GetBool("webserver.enable_ssl")
 	)
 
+	logger.Infof("Web service addr: %s(enable ssl: %v)", addr, enableSSL)
 	go func() {
 		// http service
 		mux := startupService()

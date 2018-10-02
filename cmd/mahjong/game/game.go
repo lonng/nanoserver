@@ -1,6 +1,7 @@
 package game
 
 import (
+	"fmt"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -75,10 +76,7 @@ func Startup() {
 	pipeline.Inbound().PushBack(c.inbound)
 	pipeline.Outbound().PushBack(c.outbound)
 
-	// starx settings
 	nano.SetSerializer(json.NewSerializer())
-
-	addr := viper.GetString("core.addr")
-	// run it!
+	addr := fmt.Sprintf(":%d", viper.GetInt("game-server.port"))
 	nano.Listen(addr, nano.WithPipeline(pipeline))
 }

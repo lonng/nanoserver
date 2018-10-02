@@ -41,7 +41,6 @@ func main() {
 	}
 
 	app.Action = serve
-
 	app.Run(os.Args)
 }
 
@@ -50,6 +49,7 @@ func serve(c *cli.Context) error {
 	viper.SetConfigFile(c.String("config"))
 	viper.ReadInConfig()
 
+	log.SetFormatter(&log.TextFormatter{DisableColors: true})
 	nano.EnableDebug()
 	if viper.GetBool("core.debug") {
 		log.SetLevel(log.DebugLevel)

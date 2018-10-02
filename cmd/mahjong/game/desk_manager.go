@@ -1,18 +1,17 @@
 package game
 
 import (
+	"fmt"
+	"strings"
 	"time"
 
-	"strings"
-
 	"github.com/lonnng/nanoserver/db"
-	"github.com/lonnng/nanoserver/internal/async"
-	"github.com/lonnng/nanoserver/internal/constant"
-	"github.com/lonnng/nanoserver/internal/errutil"
-	"github.com/lonnng/nanoserver/internal/protocol"
-	"github.com/lonnng/nanoserver/internal/room"
+	"github.com/lonnng/nanoserver/pkg/async"
+	"github.com/lonnng/nanoserver/pkg/constant"
+	"github.com/lonnng/nanoserver/pkg/errutil"
+	"github.com/lonnng/nanoserver/pkg/room"
+	"github.com/lonnng/nanoserver/protocol"
 
-	"fmt"
 	"github.com/lonnng/nano"
 	"github.com/lonnng/nano/component"
 	"github.com/lonnng/nano/session"
@@ -74,7 +73,7 @@ func NewDeskManager() *DeskManager {
 }
 
 func (dm *DeskManager) AfterInit() {
-	nano.OnSessionClosed(func(s *session.Session) {
+	session.Lifetime.OnClosed(func(s *session.Session) {
 		// Fixed: 玩家WIFI切换到4G网络不断开, 重连时，将UID设置为illegalSessionUid
 		if s.UID() > 0 {
 			if err := dm.onPlayerDisconnect(s); err != nil {
@@ -505,7 +504,7 @@ func (dm *DeskManager) CreateDesk(s *session.Session, data *protocol.CreateDeskR
 	logger.Infof("牌桌选项: %#v", data.DeskOpts)
 
 	if !verifyOptions(data.DeskOpts) {
-		return errutil.YXErrIllegalParameter
+		return errutil.ErrIllegalParameter
 	}
 
 	// 四人模式，默认可以平胡

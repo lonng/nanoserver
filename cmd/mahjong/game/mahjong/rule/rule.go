@@ -2,7 +2,7 @@ package rule
 
 import (
 	"github.com/lonnng/nanoserver/cmd/mahjong/game/mahjong"
-	"github.com/lonnng/nanoserver/internal/protocol"
+	"github.com/lonnng/nanoserver/protocol"
 )
 
 var defaultRule = NewBase()

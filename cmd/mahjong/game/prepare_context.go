@@ -28,7 +28,7 @@ func (p *prepareContext) isSorted(uid int64) bool {
 	return p.sortedStatus[uid]
 }
 
-func (p *prepareContext) reset(){
+func (p *prepareContext) reset() {
 	p.sortedStatus = map[int64]bool{}
 	p.readyStatus = map[int64]bool{}
 }

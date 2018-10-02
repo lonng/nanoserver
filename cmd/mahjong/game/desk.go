@@ -13,11 +13,11 @@ import (
 	"github.com/lonnng/nanoserver/cmd/mahjong/game/mahjong"
 	"github.com/lonnng/nanoserver/cmd/mahjong/game/mahjong/rule"
 	"github.com/lonnng/nanoserver/db"
-	"github.com/lonnng/nanoserver/internal/async"
-	"github.com/lonnng/nanoserver/internal/constant"
-	"github.com/lonnng/nanoserver/internal/errutil"
-	"github.com/lonnng/nanoserver/internal/protocol"
-	"github.com/lonnng/nanoserver/internal/room"
+	"github.com/lonnng/nanoserver/pkg/async"
+	"github.com/lonnng/nanoserver/pkg/constant"
+	"github.com/lonnng/nanoserver/pkg/errutil"
+	"github.com/lonnng/nanoserver/pkg/room"
+	"github.com/lonnng/nanoserver/protocol"
 
 	"github.com/lonnng/nanoserver/db/model"
 
@@ -425,7 +425,7 @@ func (d *Desk) start() {
 func (d *Desk) qiPaiFinished(uid int64) error {
 	if d.status() > constant.DeskStatusDuanPai {
 		d.logger.Debugf("当前牌桌状态: %s", d.status().String())
-		return errutil.YXErrIllegalDeskStatus
+		return errutil.ErrIllegalDeskStatus
 	}
 
 	d.prepare.sorted(uid)
@@ -1691,7 +1691,7 @@ func (d *Desk) playerWithId(uid int64) (*Player, error) {
 		}
 	}
 
-	return nil, errutil.YXErrPlayerNotFound
+	return nil, errutil.ErrPlayerNotFound
 }
 
 func (d *Desk) setNextRoundBanker(uid int64, override bool) {

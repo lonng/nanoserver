@@ -1,26 +1,26 @@
 package db
 
 import (
-	"github.com/lonnng/nanoserver/internal/errutil"
 	"github.com/lonnng/nanoserver/db/model"
+	"github.com/lonnng/nanoserver/pkg/errutil"
 )
 
 func QueryThirdAccount(account, platform string) (*model.ThirdAccount, error) {
 	t := &model.ThirdAccount{ThirdAccount: account, Platform: platform}
-	has, err := DB.Get(t)
+	has, err := database.Get(t)
 	if err != nil {
 		return nil, err
 	}
 
 	if !has {
-		return nil, errutil.YXErrThirdAccountNotFound
+		return nil, errutil.ErrThirdAccountNotFound
 	}
 
 	return t, nil
 }
 
 func InsertThirdAccount(account *model.ThirdAccount, u *model.User) error {
-	session := DB.NewSession()
+	session := database.NewSession()
 	if err := session.Begin(); err != nil {
 		return err
 	}
@@ -44,8 +44,8 @@ func InsertThirdAccount(account *model.ThirdAccount, u *model.User) error {
 
 func UpdateThirdAccount(account *model.ThirdAccount) error {
 	if account == nil {
-		return errutil.YXErrInvalidParameter
+		return errutil.ErrInvalidParameter
 	}
-	_, err := DB.Where("id=?", account.Id).Update(account)
+	_, err := database.Where("id=?", account.Id).Update(account)
 	return err
 }

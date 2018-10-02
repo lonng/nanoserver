@@ -1,9 +1,0 @@
-This service runs as a Google Managed VM.
-Use the gcloud tool to deploy:
-
-$ gcloud --project symbolic-datum-552 preview app deploy --no-promote app.yaml
-
-Then use the Cloud Console to set the new version as the default,
-and delete the old instance (lest it keep running):
-https://cloud.google.com/console/appengine/versions?project=symbolic-datum-552&moduleId=pushback
-

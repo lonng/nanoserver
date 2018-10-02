@@ -4,8 +4,8 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/lonnng/nanoserver/internal/errutil"
-	"github.com/lonnng/nanoserver/internal/protocol"
+	"github.com/lonnng/nanoserver/pkg/errutil"
+	"github.com/lonnng/nanoserver/protocol"
 
 	"github.com/lonnng/nano/session"
 )
@@ -50,7 +50,7 @@ func requireCardCount(round int) int {
 func playerWithSession(s *session.Session) (*Player, error) {
 	p, ok := s.Value(kCurPlayer).(*Player)
 	if !ok {
-		return nil, errutil.YXErrPlayerNotFound
+		return nil, errutil.ErrPlayerNotFound
 	}
 	return p, nil
 }

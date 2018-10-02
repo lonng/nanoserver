@@ -5,11 +5,11 @@ import (
 
 	"github.com/lonnng/nanoserver/cmd/mahjong/game/mahjong"
 	"github.com/lonnng/nanoserver/cmd/mahjong/game/mahjong/rule"
-	"github.com/lonnng/nanoserver/internal/protocol"
+	"github.com/lonnng/nanoserver/protocol"
 
 	"github.com/lonnng/nanoserver/db"
 	"github.com/lonnng/nanoserver/db/model"
-	"github.com/lonnng/nanoserver/internal/async"
+	"github.com/lonnng/nanoserver/pkg/async"
 
 	"github.com/lonnng/nano/session"
 	log "github.com/sirupsen/logrus"

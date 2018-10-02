@@ -1,7 +1,7 @@
 package game
 
 import (
-	"github.com/lonnng/nanoserver/internal/protocol"
+	"github.com/lonnng/nanoserver/protocol"
 )
 
 // TODO: conc
@@ -18,6 +18,6 @@ func Reset(uid int64) {
 	defaultManager.chReset <- uid
 }
 
-func Recharge(uid , coin int64) {
+func Recharge(uid, coin int64) {
 	defaultManager.chRecharge <- RechargeInfo{uid, coin}
 }

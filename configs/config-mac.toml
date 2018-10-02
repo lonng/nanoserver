@@ -1,0 +1,86 @@
+[core]
+# enable debug mode
+debug = true
+heartbeat = 30
+consume = "4/2,8/3,16/4" #房卡消耗, 使用逗号隔开, 局数/房卡数, 例如4局消耗1张, 8局消耗1张, 16局消耗2张, 则为: 4/1,8/1,16/2
+
+#WEB服务器设置
+[webserver]
+addr = "0.0.0.0:12307"                         #监听地址
+enable_ssl = false                            #是否使用https, 如果为true, 则必须配置cert和key的路径
+static_dir = "web/static"
+
+#证书设置
+[webserver.certificates]
+cert = "configs/****.crt"       #证书路径
+key = "configs/****.key"        #Key路径
+
+[game-server]
+host = "127.0.0.1"
+port = 33251
+
+# Redis server config
+[redis]
+host = "127.0.0.1"
+port = 6357
+
+# Mysql server config
+[database]
+host = "127.0.0.1"
+port = 3306
+dbname = "scmj"
+password = ""
+username = "root"
+args = "charset=utf8"
+buf_size = 10
+max_idle_conns = 20
+max_open_conns = 15
+show_sql = true
+
+# 微信
+[wechat]
+appid = "YOUR_WX_APPID"
+appsecret = "YOUR_APP_SECRET"
+callback_url = "YOUR_CALLBACK"
+mer_id = "YOUR_MER_ID"
+unify_order_url = "https://api.mch.weixin.qq.com/pay/unifiedorder"
+
+#Token设置
+[token]
+expires = 21600                        #token过期时间
+
+#白名单设置
+[whitelist]
+ip = ["10.10.*", "127.0.0.1", ".*"]                 #白名单地址, 支持golang正则表达式语法
+
+#分享信息
+[share]
+title = "血战到底"
+desc = "纯正四川玩法，快捷便利的掌上血战，轻松组局，随时随地尽情游戏"
+
+#更新设置
+[update]
+force = true #是否强制更新
+version = "1.9.3"
+android = "https://fir.im/tand"
+ios = "https://fir.im/tios"
+
+#联系设置
+[contact]
+daili1 = "kefuweixin01"
+daili2 = "kefuweixin01"
+kefu1 = "kefuweixin01"
+
+#语音账号http://gcloud.qq.com/product/6
+[voice]
+appid = "xxx"
+appkey = "xxx"
+
+#广播消息
+[broadcast]
+message = ["系统消息：健康游戏，禁止赌博", "欢迎进入游戏"]
+
+#登陆相关
+[login]
+guest = true
+lists = ["test"]

@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/lonnng/nanoserver/cmd/mahjong/game/mahjong"
-	"github.com/lonnng/nanoserver/internal/protocol"
+	"github.com/lonnng/nanoserver/protocol"
 )
 
 func _TestBase_CanWinBySelfDrawing(t *testing.T) {

@@ -3,9 +3,10 @@ package mahjong
 import (
 	"bytes"
 	"fmt"
-	"github.com/lonnng/nanoserver/internal/protocol"
 	"math/rand"
 	"time"
+
+	"github.com/lonnng/nanoserver/protocol"
 )
 
 const (

@@ -4,8 +4,8 @@ import (
 	"strings"
 
 	"github.com/lonnng/nanoserver/db/model"
-	"github.com/lonnng/nanoserver/internal/algoutil"
-	"github.com/lonnng/nanoserver/internal/errutil"
+	"github.com/lonnng/nanoserver/pkg/algoutil"
+	"github.com/lonnng/nanoserver/pkg/errutil"
 )
 
 const (
@@ -15,23 +15,23 @@ const (
 
 func QueryOrder(orderID string) (*model.Order, error) {
 	order := &model.Order{OrderId: orderID}
-	has, err := DB.Get(order)
+	has, err := database.Get(order)
 	if err != nil {
 		return nil, err
 	}
 	if !has {
-		return nil, errutil.YXErrOrderNotFound
+		return nil, errutil.ErrOrderNotFound
 	}
 	return order, nil
 }
 
 func InsertOrder(order *model.Order) error {
 	if order == nil {
-		return errutil.YXErrInvalidParameter
+		return errutil.ErrInvalidParameter
 	}
-	_, err := DB.Insert(order)
+	_, err := database.Insert(order)
 	if err != nil {
-		return errutil.YXErrDBOperation
+		return errutil.ErrDBOperation
 	}
 	return nil
 }
@@ -50,24 +50,24 @@ func YXPayOrderList(uid int64, appid, channelID, orderID string, start, end int6
 
 	//println("uid", uid, "appid", appid, "channelid", channelID, "start", start, "end", end, "offset", offset, "count", count)
 
-	total, err := DB.Where("created_at BETWEEN ? AND ?", start, end).Count(order)
+	total, err := database.Where("created_at BETWEEN ? AND ?", start, end).Count(order)
 	if err != nil {
 		logger.Error(err)
-		return nil, 0, errutil.YXErrDBOperation
+		return nil, 0, errutil.ErrDBOperation
 	}
 
 	result := make([]model.Order, 0)
 	if count == noLimitFlag {
-		err = DB.Where("created_at BETWEEN ? AND ?", start, end).
+		err = database.Where("created_at BETWEEN ? AND ?", start, end).
 			Desc("id").Find(&result, order)
 	} else {
-		err = DB.Where("created_at BETWEEN ? AND ?", start, end).
+		err = database.Where("created_at BETWEEN ? AND ?", start, end).
 			Desc("id").Limit(count, offset).Find(&result, order)
 	}
 
 	if err != nil {
 		logger.Error(err)
-		return nil, 0, errutil.YXErrDBOperation
+		return nil, 0, errutil.ErrDBOperation
 	}
 
 	return result, int(total), nil
@@ -87,24 +87,24 @@ func OrderList(uid int64, appid, channelID, orderID, payBy string, start, end in
 
 	//println("uid", uid, "appid", appid, "channelid", channelID, "start", start, "end", end, "offset", offset, "count", count)
 
-	total, err := DB.Where("created_at BETWEEN ? AND ?", start, end).Count(order)
+	total, err := database.Where("created_at BETWEEN ? AND ?", start, end).Count(order)
 	if err != nil {
 		logger.Error(err)
-		return nil, 0, errutil.YXErrDBOperation
+		return nil, 0, errutil.ErrDBOperation
 	}
 
 	result := make([]model.Order, 0)
 	if count == noLimitFlag {
-		err = DB.Where("created_at BETWEEN ? AND ?", start, end).
+		err = database.Where("created_at BETWEEN ? AND ?", start, end).
 			Desc("id").Find(&result, order)
 	} else {
-		err = DB.Where("created_at BETWEEN ? AND ?", start, end).
+		err = database.Where("created_at BETWEEN ? AND ?", start, end).
 			Desc("id").Limit(count, offset).Find(&result, order)
 	}
 
 	if err != nil {
 		logger.Error(err)
-		return nil, 0, errutil.YXErrDBOperation
+		return nil, 0, errutil.ErrDBOperation
 	}
 
 	return result, int(total), nil
@@ -112,14 +112,14 @@ func OrderList(uid int64, appid, channelID, orderID, payBy string, start, end in
 
 func BalanceList(uids []string) (map[string]string, error) {
 	if uids == nil {
-		return nil, errutil.YXErrIllegalParameter
+		return nil, errutil.ErrIllegalParameter
 	}
 
 	sql := "SELECT  uid, coin from `user` WHERE uid IN ( " + strings.Join(uids, ",") + ")"
-	results, err := DB.Query(sql)
+	results, err := database.Query(sql)
 	if err != nil {
 		logger.Error(err)
-		return nil, errutil.YXErrDBOperation
+		return nil, errutil.ErrDBOperation
 	}
 
 	m := make(map[string]string)

@@ -85,7 +85,7 @@ func Combined(cond ...string) string {
 	return strings.Join(cond, " AND ")
 }
 
-func Insert(bean interface{}) error{
-	_, err := DB.Insert(bean)
+func Insert(bean interface{}) error {
+	_, err := database.Insert(bean)
 	return err
 }

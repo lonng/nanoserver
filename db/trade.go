@@ -1,21 +1,21 @@
 package db
 
 import (
-	"github.com/lonnng/nanoserver/internal/algoutil"
-	"github.com/lonnng/nanoserver/internal/errutil"
 	"github.com/lonnng/nanoserver/db/model"
+	"github.com/lonnng/nanoserver/pkg/algoutil"
+	"github.com/lonnng/nanoserver/pkg/errutil"
 )
 
 func InsertTrade(t *model.Trade) error {
-	logger.Info("insert trade, order id: "+t.OrderId)
+	logger.Info("insert trade, order id: " + t.OrderId)
 
 	trade := &model.Trade{OrderId: t.OrderId}
-	has, err := DB.Get(trade)
+	has, err := database.Get(trade)
 	if err != nil {
 		return err
 	}
 	if has {
-		return errutil.YXErrTradeExisted
+		return errutil.ErrTradeExisted
 	}
 	order, err := QueryOrder(t.OrderId)
 	if err != nil {
@@ -26,7 +26,7 @@ func InsertTrade(t *model.Trade) error {
 	} else {
 		order.Status = OrderStatusPayed
 	}
-	sess := DB.NewSession()
+	sess := database.NewSession()
 
 	// 开始事务
 	sess.Begin()
@@ -66,24 +66,24 @@ func TradeList(appid, channelID, orderID string, start, end int64, offset, count
 		ChannelId: channelID,
 		OrderId:   orderID,
 	}
-	total, err := DB.Where("pay_at BETWEEN ? AND ?", start, end).Count(trade)
+	total, err := database.Where("pay_at BETWEEN ? AND ?", start, end).Count(trade)
 	if err != nil {
 		logger.Error(err)
-		return nil, 0, errutil.YXErrDBOperation
+		return nil, 0, errutil.ErrDBOperation
 	}
 
 	result := make([]ViewTrade, 0)
 	if count == noLimitFlag {
-		err = DB.Where("pay_at BETWEEN ? AND ?", start, end).
+		err = database.Where("pay_at BETWEEN ? AND ?", start, end).
 			Desc("id").Find(&result, trade)
 	} else {
-		err = DB.Where("pay_at BETWEEN ? AND ?", start, end).
+		err = database.Where("pay_at BETWEEN ? AND ?", start, end).
 			Desc("id").Limit(count, offset).Find(&result, trade)
 	}
 
 	if err != nil {
 		logger.Error(err)
-		return nil, 0, errutil.YXErrDBOperation
+		return nil, 0, errutil.ErrDBOperation
 	}
 
 	return result, int(total), nil

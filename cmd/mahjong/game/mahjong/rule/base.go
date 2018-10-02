@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/lonnng/nanoserver/cmd/mahjong/game/mahjong"
-	"github.com/lonnng/nanoserver/internal/protocol"
+	"github.com/lonnng/nanoserver/protocol"
 )
 
 const (

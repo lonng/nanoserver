@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/lonnng/nanoserver/db"
-	"github.com/lonnng/nanoserver/internal/protocol"
 	"github.com/lonnng/nanoserver/db/model"
+	"github.com/lonnng/nanoserver/protocol"
 )
 
 type SnapShot struct {

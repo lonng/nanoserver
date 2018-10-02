@@ -2,7 +2,6 @@ package game
 
 import (
 	"encoding/base64"
-
 	"fmt"
 
 	"github.com/lonnng/nano"
