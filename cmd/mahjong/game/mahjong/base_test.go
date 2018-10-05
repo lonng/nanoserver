@@ -1,10 +1,8 @@
-package rule
+package mahjong
 
 import (
-	"testing"
-
-	"github.com/lonnng/nanoserver/cmd/mahjong/game/mahjong"
 	"github.com/lonnng/nanoserver/protocol"
+	"testing"
 )
 
 func _TestBase_CanWinBySelfDrawing(t *testing.T) {
@@ -74,18 +72,13 @@ func _TestBase_Tings(t *testing.T) {
 
 // #issue: 2017-08-19/916829#6
 func TestIsTing(t *testing.T) {
-	ctx := &mahjong.Context{
+	ctx := &Context{
 		WinningID:         34,
 		NewDrawingID:      16,
 		NewOtherDiscardID: 34, ResultType: 0,
 		Opts: &protocol.DeskOptions{
 			MaxRound: 8,
 			MaxFan:   3,
-			Zimo:     "di",
-			Menqing:  true,
-			Jiangdui: true,
-			Jiaxin:   true,
-			Pengpeng: true,
 		},
 		LastHint: &protocol.Hint{
 			Ops: []protocol.Op{{Type: 4, TileIDs: []int{34}}, {Type: 5, TileIDs: []int{}}, {Type: 2, TileIDs: []int{34}}},
@@ -93,69 +86,53 @@ func TestIsTing(t *testing.T) {
 	}
 
 	//2条 4条 2筒 9条 5筒 1条 1筒 5筒 9条 6条 3筒 5条 3条
-	onHand := mahjong.Indexes{2, 4, 12, 9, 15, 1, 11, 15, 9, 6, 13, 5, 3, 9}
-	defaultRule.Multiple(ctx, onHand, mahjong.Indexes{})
-}
-
-func _TestBase_MaxMultiple(t *testing.T) {
-	onHand := mahjong.Indexes{2, 2, 3, 5, 6, 7, 8, 11, 12, 13}
-	opts := &protocol.DeskOptions{
-		MaxRound: 8,
-		MaxFan:   5,
-		Zimo:     "fan",
-		Menqing:  true,
-		Jiangdui: true,
-		Jiaxin:   true,
-		Pengpeng: true,
-		Yaojiu:   true,
-	}
-	m, index := defaultRule.MaxMultiple(opts, onHand, mahjong.Indexes{1, 1, 1})
-	println(m, index)
+	onHand := Indexes{2, 4, 12, 9, 15, 1, 11, 15, 9, 6, 13, 5, 3, 9}
+	Multiple(ctx, onHand, Indexes{})
 }
 
 func TestBase_IsYJ(t *testing.T) {
 	tests := []struct {
-		onhand, pongkong mahjong.Indexes
+		onhand, pongkong Indexes
 		isYaoJiu         bool
 	}{
 		{
-			mahjong.Indexes{1, 2, 3, 1, 1, 9, 9, 9, 7, 8, 9},
-			mahjong.Indexes{11, 11, 11},
+			Indexes{1, 2, 3, 1, 1, 9, 9, 9, 7, 8, 9},
+			Indexes{11, 11, 11},
 			true,
 		},
 		{
-			mahjong.Indexes{1, 2, 3, 1, 1, 9, 9, 9, 7, 8, 9},
-			mahjong.Indexes{12, 12, 12},
+			Indexes{1, 2, 3, 1, 1, 9, 9, 9, 7, 8, 9},
+			Indexes{12, 12, 12},
 			false,
 		},
 		{
-			mahjong.Indexes{1, 2, 3, 1, 1, 9, 9, 9, 7, 8, 9},
-			mahjong.Indexes{11, 11, 11, 11},
+			Indexes{1, 2, 3, 1, 1, 9, 9, 9, 7, 8, 9},
+			Indexes{11, 11, 11, 11},
 			true,
 		},
 		{
-			mahjong.Indexes{1, 2, 3, 2, 2, 9, 9, 9, 7, 8, 9},
-			mahjong.Indexes{11, 11, 11},
+			Indexes{1, 2, 3, 2, 2, 9, 9, 9, 7, 8, 9},
+			Indexes{11, 11, 11},
 			false,
 		},
 		{
-			mahjong.Indexes{1, 2, 3, 1, 1, 1, 9, 9, 7, 8, 9},
-			mahjong.Indexes{11, 11, 11},
+			Indexes{1, 2, 3, 1, 1, 1, 9, 9, 7, 8, 9},
+			Indexes{11, 11, 11},
 			true,
 		},
 		{
-			mahjong.Indexes{4, 2, 3, 1, 1, 9, 9, 9, 7, 8, 9},
-			mahjong.Indexes{11, 11, 11},
+			Indexes{4, 2, 3, 1, 1, 9, 9, 9, 7, 8, 9},
+			Indexes{11, 11, 11},
 			false,
 		},
 		{
-			mahjong.Indexes{7, 8, 9, 11, 11, 17, 17, 18, 18, 19, 19},
-			mahjong.Indexes{1, 1, 1},
+			Indexes{7, 8, 9, 11, 11, 17, 17, 18, 18, 19, 19},
+			Indexes{1, 1, 1},
 			true,
 		},
 		{
-			mahjong.Indexes{1, 2, 3, 7, 8, 9, 11, 11, 17, 17, 18, 18, 19, 19},
-			mahjong.Indexes{},
+			Indexes{1, 2, 3, 7, 8, 9, 11, 11, 17, 17, 18, 18, 19, 19},
+			Indexes{},
 			true,
 		},
 	}

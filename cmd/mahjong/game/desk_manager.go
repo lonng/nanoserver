@@ -72,11 +72,11 @@ func NewDeskManager() *DeskManager {
 	}
 }
 
-func (dm *DeskManager) AfterInit() {
+func (manager *DeskManager) AfterInit() {
 	session.Lifetime.OnClosed(func(s *session.Session) {
 		// Fixed: 玩家WIFI切换到4G网络不断开, 重连时，将UID设置为illegalSessionUid
 		if s.UID() > 0 {
-			if err := dm.onPlayerDisconnect(s); err != nil {
+			if err := manager.onPlayerDisconnect(s); err != nil {
 				logger.Errorf("玩家退出: UID=%d, Error=%s", s.UID, err.Error())
 			}
 		}
@@ -86,7 +86,7 @@ func (dm *DeskManager) AfterInit() {
 	nano.NewTimer(300*time.Second, func() {
 		destroyDesk := map[room.Number]*Desk{}
 		deadline := time.Now().Add(-24 * time.Hour).Unix()
-		for no, d := range dm.desks {
+		for no, d := range manager.desks {
 			// 清除创建超过24小时的房间
 			if d.status() == constant.DeskStatusDestory || d.createdAt < deadline {
 				destroyDesk[no] = d
@@ -96,31 +96,31 @@ func (dm *DeskManager) AfterInit() {
 			d.destroy()
 		}
 
-		dm.dumpDeskInfo()
+		manager.dumpDeskInfo()
 
 		// 统计结果异步写入数据库
 		sCount := defaultManager.sessionCount()
-		dCount := len(dm.desks)
+		dCount := len(manager.desks)
 		async.Run(func() {
 			db.InsertOnline(sCount, dCount)
 		})
 	})
 }
 
-func (dm *DeskManager) dumpDeskInfo() {
-	c := len(dm.desks)
+func (manager *DeskManager) dumpDeskInfo() {
+	c := len(manager.desks)
 	if c < 1 {
 		return
 	}
 
 	logger.Infof("剩余房间数量: %d 在线人数: %d  当前时间: %s", c, defaultManager.sessionCount(), time.Now().Format("2006-01-02 15:04:05"))
-	for no, d := range dm.desks {
+	for no, d := range manager.desks {
 		logger.Debugf("房号: %s, 创建时间: %s, 创建玩家: %d, 状态: %s, 总局数: %d, 当前局数: %d",
 			no, time.Unix(d.createdAt, 0).String(), d.creator, d.status().String(), d.opts.MaxRound, d.round)
 	}
 }
 
-func (dm *DeskManager) onPlayerDisconnect(s *session.Session) error {
+func (manager *DeskManager) onPlayerDisconnect(s *session.Session) error {
 	uid := s.UID()
 	p, err := playerWithSession(s)
 	if err != nil {
@@ -142,23 +142,23 @@ func (dm *DeskManager) onPlayerDisconnect(s *session.Session) error {
 }
 
 // 根据桌号返回牌桌数据
-func (dm *DeskManager) desk(number room.Number) (*Desk, bool) {
-	d, ok := dm.desks[number]
+func (manager *DeskManager) desk(number room.Number) (*Desk, bool) {
+	d, ok := manager.desks[number]
 	return d, ok
 }
 
 // 设置桌号对应的牌桌数据
-func (dm *DeskManager) setDesk(number room.Number, desk *Desk) {
+func (manager *DeskManager) setDesk(number room.Number, desk *Desk) {
 	if desk == nil {
-		delete(dm.desks, number)
-		logger.WithField(fieldDesk, number).Debugf("清除房间: 剩余: %d", len(dm.desks))
+		delete(manager.desks, number)
+		logger.WithField(fieldDesk, number).Debugf("清除房间: 剩余: %d", len(manager.desks))
 	} else {
-		dm.desks[number] = desk
+		manager.desks[number] = desk
 	}
 }
 
 // 检查登录玩家关闭应用之前是否正在游戏
-func (dm *DeskManager) UnCompleteDesk(s *session.Session, _ []byte) error {
+func (manager *DeskManager) UnCompleteDesk(s *session.Session, _ []byte) error {
 	resp := &protocol.UnCompleteDeskResponse{}
 
 	p, err := playerWithSession(s)
@@ -173,7 +173,7 @@ func (dm *DeskManager) UnCompleteDesk(s *session.Session, _ []byte) error {
 
 	d := p.desk
 	if d.isDestroy() {
-		delete(dm.desks, d.roomNo)
+		delete(manager.desks, d.roomNo)
 		p.desk = nil
 		p.logger.Debug("DeskManager.UnCompleteDesk: 房间已销毁")
 		return s.Response(resp)
@@ -195,7 +195,7 @@ func (dm *DeskManager) UnCompleteDesk(s *session.Session, _ []byte) error {
 }
 
 // 网络断开后, 重新连接网络
-func (dm *DeskManager) ReConnect(s *session.Session, req *protocol.ReConnect) error {
+func (manager *DeskManager) ReConnect(s *session.Session, req *protocol.ReConnect) error {
 	uid := req.Uid
 
 	// 绑定UID
@@ -238,8 +238,8 @@ func (dm *DeskManager) ReConnect(s *session.Session, req *protocol.ReConnect) er
 }
 
 // 网络断开后, 如果ReConnect后发现当前正在房间中, 则重新进入, 桌号是之前的桌号
-func (dm *DeskManager) ReJoin(s *session.Session, data *protocol.ReJoinDeskRequest) error {
-	d, ok := dm.desk(room.Number(data.DeskNo))
+func (manager *DeskManager) ReJoin(s *session.Session, data *protocol.ReJoinDeskRequest) error {
+	d, ok := manager.desk(room.Number(data.DeskNo))
 	if !ok || d.isDestroy() {
 		return s.Response(&protocol.ReJoinDeskResponse{
 			Code:  -1,
@@ -252,7 +252,7 @@ func (dm *DeskManager) ReJoin(s *session.Session, data *protocol.ReJoinDeskReque
 }
 
 // 应用退出后重新进入房间
-func (dm *DeskManager) ReEnter(s *session.Session, msg *protocol.ReEnterDeskRequest) error {
+func (manager *DeskManager) ReEnter(s *session.Session, msg *protocol.ReEnterDeskRequest) error {
 	p, err := playerWithSession(s)
 	if err != nil {
 		logger.Errorf("玩家重新进入房间: UID=%d", s.UID())
@@ -274,7 +274,7 @@ func (dm *DeskManager) ReEnter(s *session.Session, msg *protocol.ReEnterDeskRequ
 	return d.onPlayerReJoin(s)
 }
 
-func (dm *DeskManager) Pause(s *session.Session, _ []byte) error {
+func (manager *DeskManager) Pause(s *session.Session, _ []byte) error {
 	uid := s.UID()
 	p, err := playerWithSession(s)
 	if err != nil {
@@ -293,7 +293,7 @@ func (dm *DeskManager) Pause(s *session.Session, _ []byte) error {
 	return nil
 }
 
-func (dm *DeskManager) Resume(s *session.Session, _ []byte) error {
+func (manager *DeskManager) Resume(s *session.Session, _ []byte) error {
 	uid := s.UID()
 	p, err := playerWithSession(s)
 	if err != nil {
@@ -330,7 +330,7 @@ func (dm *DeskManager) Resume(s *session.Session, _ []byte) error {
 }
 
 // 理牌结束
-func (dm *DeskManager) QiPaiFinished(s *session.Session, msg []byte) error {
+func (manager *DeskManager) QiPaiFinished(s *session.Session, msg []byte) error {
 	p, err := playerWithSession(s)
 	if err != nil {
 		return err
@@ -346,7 +346,7 @@ func (dm *DeskManager) QiPaiFinished(s *session.Session, msg []byte) error {
 }
 
 // 定缺
-func (dm *DeskManager) DingQue(s *session.Session, msg *protocol.DingQue) error {
+func (manager *DeskManager) DingQue(s *session.Session, msg *protocol.DingQue) error {
 	p, err := playerWithSession(s)
 	if err != nil {
 		return err
@@ -373,7 +373,7 @@ func (dm *DeskManager) DingQue(s *session.Session, msg *protocol.DingQue) error 
 
 // Exit 处理玩家退出, 客户端会在房间人没有满的情况下发送DeskManager.Exit消息, 如果人满, 或游戏
 // 开始, 客户端则发送DeskManager.Dissolve申请解散
-func (dm *DeskManager) Exit(s *session.Session, msg *protocol.ExitRequest) error {
+func (manager *DeskManager) Exit(s *session.Session, msg *protocol.ExitRequest) error {
 	uid := s.UID()
 	p, err := playerWithSession(s)
 	if err != nil {
@@ -429,7 +429,7 @@ func (dm *DeskManager) Exit(s *session.Session, msg *protocol.ExitRequest) error
 	return nil
 }
 
-func (dm *DeskManager) OpChoose(s *session.Session, msg *protocol.OpChooseRequest) error {
+func (manager *DeskManager) OpChoose(s *session.Session, msg *protocol.OpChooseRequest) error {
 	p, err := playerWithSession(s)
 	if err != nil {
 		return err
@@ -443,7 +443,7 @@ func (dm *DeskManager) OpChoose(s *session.Session, msg *protocol.OpChooseReques
 	return nil
 }
 
-func (dm *DeskManager) Ready(s *session.Session, _ []byte) error {
+func (manager *DeskManager) Ready(s *session.Session, _ []byte) error {
 	p, err := playerWithSession(s)
 	if err != nil {
 		return err
@@ -458,7 +458,7 @@ func (dm *DeskManager) Ready(s *session.Session, _ []byte) error {
 	return err
 }
 
-func (dm *DeskManager) ClientInitCompleted(s *session.Session, msg *protocol.ClientInitCompletedRequest) error {
+func (manager *DeskManager) ClientInitCompleted(s *session.Session, msg *protocol.ClientInitCompletedRequest) error {
 	logger.Debug(msg)
 	uid := s.UID()
 	p, err := playerWithSession(s)
@@ -488,7 +488,7 @@ func (dm *DeskManager) ClientInitCompleted(s *session.Session, msg *protocol.Cli
 }
 
 //创建一张桌子
-func (dm *DeskManager) CreateDesk(s *session.Session, data *protocol.CreateDeskRequest) error {
+func (manager *DeskManager) CreateDesk(s *session.Session, data *protocol.CreateDeskRequest) error {
 	p, err := playerWithSession(s)
 	if err != nil {
 		return err
@@ -538,7 +538,7 @@ func (dm *DeskManager) CreateDesk(s *session.Session, data *protocol.CreateDeskR
 	}
 
 	// save desk information
-	dm.desks[no] = d
+	manager.desks[no] = d
 
 	resp := &protocol.CreateDeskResponse{
 		TableInfo: protocol.TableInfo{
@@ -552,18 +552,18 @@ func (dm *DeskManager) CreateDesk(s *session.Session, data *protocol.CreateDeskR
 			Mode:      d.opts.Mode,
 		},
 	}
-	d.logger.Infof("当前已有牌桌数: %d", len(dm.desks))
+	d.logger.Infof("当前已有牌桌数: %d", len(manager.desks))
 	return s.Response(resp)
 }
 
 //新join在session的context中尚未有desk的cache
-func (dm *DeskManager) Join(s *session.Session, data *protocol.JoinDeskRequest) error {
+func (manager *DeskManager) Join(s *session.Session, data *protocol.JoinDeskRequest) error {
 	if forceUpdate && data.Version != version {
 		return s.Response(joinVersionExpire)
 	}
 
 	dn := room.Number(data.DeskNo)
-	d, ok := dm.desk(dn)
+	d, ok := manager.desk(dn)
 	if !ok {
 		return s.Response(deskNotFoundResponse)
 	}
@@ -602,7 +602,7 @@ func (dm *DeskManager) Join(s *session.Session, data *protocol.JoinDeskRequest) 
 }
 
 // 有玩家请求解散房间
-func (dm *DeskManager) Dissolve(s *session.Session, msg []byte) error {
+func (manager *DeskManager) Dissolve(s *session.Session, msg []byte) error {
 	p, err := playerWithSession(s)
 	if err != nil {
 		return err
@@ -620,7 +620,7 @@ func (dm *DeskManager) Dissolve(s *session.Session, msg []byte) error {
 }
 
 // 玩家同意或拒绝解散房间请求
-func (dm *DeskManager) DissolveStatus(s *session.Session, data *protocol.DissolveStatusRequest) error {
+func (manager *DeskManager) DissolveStatus(s *session.Session, data *protocol.DissolveStatusRequest) error {
 	logger.Debugf("DeskManager.DissolveStatus: %+v", data)
 	p, err := playerWithSession(s)
 	if err != nil {
@@ -672,7 +672,7 @@ func (dm *DeskManager) DissolveStatus(s *session.Session, data *protocol.Dissolv
 }
 
 // 玩家语音消息
-func (dm *DeskManager) VoiceMessage(s *session.Session, msg []byte) error {
+func (manager *DeskManager) VoiceMessage(s *session.Session, msg []byte) error {
 	p, err := playerWithSession(s)
 	if err != nil {
 		return err
@@ -687,7 +687,7 @@ func (dm *DeskManager) VoiceMessage(s *session.Session, msg []byte) error {
 }
 
 // 玩家录制完语音
-func (dm *DeskManager) RecordingVoice(s *session.Session, msg *protocol.RecordingVoice) error {
+func (manager *DeskManager) RecordingVoice(s *session.Session, msg *protocol.RecordingVoice) error {
 	p, err := playerWithSession(s)
 	if err != nil {
 		return err

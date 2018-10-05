@@ -1,10 +1,7 @@
-//https://www.xqbase.com/other/mahjongg_english.htm
-package rule
+package mahjong
 
 import (
 	"fmt"
-
-	"github.com/lonnng/nanoserver/cmd/mahjong/game/mahjong"
 	"github.com/lonnng/nanoserver/protocol"
 )
 
@@ -40,14 +37,8 @@ var descriptions = [...]string{
 	HaoHuaLongQiDui: "豪华龙七对",
 }
 
-type Base struct{}
-
-func NewBase() *Base {
-	return &Base{}
-}
-
 // 返回番数
-func (b Base) Multiple(ctx *mahjong.Context, onHand, pongKong mahjong.Indexes) int {
+func Multiple(ctx *Context, onHand, pongKong Indexes) int {
 	if len(onHand)%3 != 2 {
 		panic("error tile count")
 	}
@@ -57,7 +48,7 @@ func (b Base) Multiple(ctx *mahjong.Context, onHand, pongKong mahjong.Indexes) i
 	// 选项
 	opts := ctx.Opts
 
-	ms := Stats(onHand, pongKong)
+	ms := NewStats(onHand, pongKong)
 	// 番数
 	multiple := 0
 
@@ -175,18 +166,18 @@ func (b Base) Multiple(ctx *mahjong.Context, onHand, pongKong mahjong.Indexes) i
 }
 
 // 返回听牌最大番数
-func (b Base) MaxMultiple(opts *protocol.DeskOptions, onHand, pongKong mahjong.Indexes) (multiple int, index int) {
+func MaxMultiple(opts *protocol.DeskOptions, onHand, pongKong Indexes) (multiple int, index int) {
 	tings := TingTiles(onHand)
-	index = mahjong.IllegalIndex
+	index = IllegalIndex
 	multiple = -1
 	for _, idx := range tings {
-		handTiles := make(mahjong.Indexes, len(onHand)+1)
+		handTiles := make(Indexes, len(onHand)+1)
 		copy(handTiles, onHand)
 		handTiles[len(onHand)] = idx
 
-		ctx := &mahjong.Context{NewOtherDiscardID: idx, Opts: opts}
+		ctx := &Context{NewOtherDiscardID: idx, Opts: opts}
 
-		if m := b.Multiple(ctx, handTiles, pongKong); m > multiple {
+		if m := Multiple(ctx, handTiles, pongKong); m > multiple {
 			index = idx
 			multiple = m
 		}

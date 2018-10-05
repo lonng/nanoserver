@@ -3,15 +3,12 @@ package game
 import (
 	"fmt"
 
+	"github.com/lonnng/nano/session"
 	"github.com/lonnng/nanoserver/cmd/mahjong/game/mahjong"
-	"github.com/lonnng/nanoserver/cmd/mahjong/game/mahjong/rule"
-	"github.com/lonnng/nanoserver/protocol"
-
 	"github.com/lonnng/nanoserver/db"
 	"github.com/lonnng/nanoserver/db/model"
 	"github.com/lonnng/nanoserver/pkg/async"
-
-	"github.com/lonnng/nano/session"
+	"github.com/lonnng/nanoserver/protocol"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -328,7 +325,7 @@ func (p *Player) chuTiles() mahjong.Mahjong {
 
 // 检查是否有叫
 func (p *Player) isTing() bool {
-	return rule.IsTing(p.handTiles().Indexes())
+	return mahjong.IsTing(p.handTiles().Indexes())
 }
 
 func (p *Player) tileIDWithIndex(index int) int {
@@ -372,7 +369,7 @@ func (p *Player) canWin() bool {
 		}
 	}
 
-	canWin := rule.CanZimo(p.handTiles().Indexes())
+	canWin := mahjong.CheckWin(p.handTiles().Indexes())
 
 	p.logger.Infof("玩家计算是否可以胡牌: 手牌=%+v, 新上手=%v, 是否可以胡=%t",
 		p.handTiles(), newTile, canWin)
@@ -473,7 +470,7 @@ func (p *Player) tingTiles() protocol.Tings {
 	for index := range distinct {
 		rest := exclude(index)
 		//log.Debugf("去除：%v，剩余：%+v", index, rest)
-		if ting := rule.TingTiles(rest); len(ting) > 0 {
+		if ting := mahjong.TingTiles(rest); len(ting) > 0 {
 			tings = append(tings, protocol.Ting{Index: index, Hu: ting})
 		}
 	}
@@ -606,20 +603,14 @@ func (p *Player) doCheckHandTiles(isNewRound bool) (int, int) {
 
 // 计算番数
 func (p *Player) scoring() int {
-	r := p.desk.rule()
-	m := r.Multiple(p.ctx, p.handTiles().Indexes(), p.pgTiles().Indexes())
-
+	m := mahjong.Multiple(p.ctx, p.handTiles().Indexes(), p.pgTiles().Indexes())
 	p.ctx.Fan = m
-
 	return 1 << uint(m)
 }
 
 func (p *Player) maxTingScore() (int, int) {
-	r := p.desk.rule()
-	m, idx := r.MaxMultiple(p.desk.opts, p.handTiles().Indexes(), p.pgTiles().Indexes())
-
+	m, idx := mahjong.MaxMultiple(p.desk.opts, p.handTiles().Indexes(), p.pgTiles().Indexes())
 	p.ctx.Fan = m
-
 	return 1 << uint(m), idx
 }
 
@@ -682,7 +673,7 @@ func (p *Player) checkHu(tid int, plus bool) bool {
 	}
 
 	// 检查胡牌
-	canHu := rule.CanHu(tiles.Indexes(), index)
+	canHu := mahjong.CanHu(tiles.Indexes(), index)
 	if !canHu {
 		return false
 	}
@@ -693,12 +684,10 @@ func (p *Player) checkHu(tid int, plus bool) bool {
 	}
 
 	// 如果不能点炮平胡
-	r := p.desk.rule()
 	onHand := append(p.handTiles().Indexes(), index)
-
 	old := p.ctx.NewOtherDiscardID
 	p.ctx.NewOtherDiscardID = tid
-	m := r.Multiple(p.ctx, onHand, p.pgTiles().Indexes())
+	m := mahjong.Multiple(p.ctx, onHand, p.pgTiles().Indexes())
 	p.ctx.NewOtherDiscardID = old
 
 	// 有番才能胡

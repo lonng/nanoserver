@@ -9,20 +9,17 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/lonnng/nano"
+	"github.com/lonnng/nano/session"
 	"github.com/lonnng/nanoserver/cmd/mahjong/game/history"
 	"github.com/lonnng/nanoserver/cmd/mahjong/game/mahjong"
-	"github.com/lonnng/nanoserver/cmd/mahjong/game/mahjong/rule"
 	"github.com/lonnng/nanoserver/db"
+	"github.com/lonnng/nanoserver/db/model"
 	"github.com/lonnng/nanoserver/pkg/async"
 	"github.com/lonnng/nanoserver/pkg/constant"
 	"github.com/lonnng/nanoserver/pkg/errutil"
 	"github.com/lonnng/nanoserver/pkg/room"
 	"github.com/lonnng/nanoserver/protocol"
-
-	"github.com/lonnng/nanoserver/db/model"
-
-	"github.com/lonnng/nano"
-	"github.com/lonnng/nano/session"
 	"github.com/pborman/uuid"
 	log "github.com/sirupsen/logrus"
 )
@@ -1635,11 +1632,6 @@ func (d *Desk) scoreChangeForHu(winner *Player, losers []Loser, tileID int, huTy
 //桌上的最后一张牌
 func (d *Desk) lastTile() *mahjong.Tile {
 	return d.allTiles[d.totalTileCount()-1]
-}
-
-//按哪个地区的规则玩
-func (d *Desk) rule() rule.Scorer {
-	return rule.Rule()
 }
 
 func (d *Desk) onPlayerExit(s *session.Session, isDisconnect bool) {

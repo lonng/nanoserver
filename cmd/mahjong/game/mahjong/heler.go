@@ -1,20 +1,17 @@
-package rule
+package mahjong
 
 import (
-	"sort"
-
-	"github.com/lonnng/nanoserver/cmd/mahjong/game/mahjong"
 	"github.com/lonnng/nanoserver/protocol"
 )
 
-func Stats(indexes ...mahjong.Indexes) *mahjong.Stats {
-	ts := &mahjong.Stats{}
+func NewStats(indexes ...Indexes) *Stats {
+	ts := &Stats{}
 	ts.FromIndex(indexes...)
 	return ts
 }
 
 //是否是清一色
-func isQingYiSe(ms *mahjong.Stats) bool {
+func isQingYiSe(ms *Stats) bool {
 	var flag byte
 
 	for i, v := range ms {
@@ -36,7 +33,7 @@ func isQingYiSe(ms *mahjong.Stats) bool {
 }
 
 //7对, 返回是否是七对, 以及包含杠的个数
-func isQiDui(ms *mahjong.Stats) bool {
+func isQiDui(ms *Stats) bool {
 	pairCount := 0
 
 	for _, v := range ms {
@@ -59,7 +56,7 @@ func isQiDui(ms *mahjong.Stats) bool {
 }
 
 //大对子
-func isDaDui(ms *mahjong.Stats) bool {
+func isDaDui(ms *Stats) bool {
 	counter := 0
 
 	for _, v := range ms {
@@ -81,13 +78,16 @@ func isDaDui(ms *mahjong.Stats) bool {
 }
 
 // 检查大对子和七对是不是只包含258
-func is258(ms *mahjong.Stats) bool {
+func is258(ms *Stats) bool {
 	for index, v := range ms {
 		if v == 0 {
 			continue
 		}
 
-		if mod := index % 10; mod != 2 || mod != 5 || mod != 8 {
+		switch mod := index % 10; mod {
+		case 2, 5, 8:
+			continue
+		default:
 			return false
 		}
 	}
@@ -95,7 +95,7 @@ func is258(ms *mahjong.Stats) bool {
 }
 
 // 胡牌时, 所有牌没有1和9
-func isZhongzhang(ms *mahjong.Stats) bool {
+func isZhongzhang(ms *Stats) bool {
 	for index, v := range ms {
 		if v == 0 {
 			continue
@@ -109,41 +109,41 @@ func isZhongzhang(ms *mahjong.Stats) bool {
 }
 
 // 是否是夹心五
-func isJiaxin(ctx *mahjong.Context, onHand mahjong.Indexes) bool {
-	index := mahjong.IndexFromID(ctx.NewDrawingID)
+func isJiaxin(ctx *Context, onHand Indexes) bool {
+	index := IndexFromID(ctx.NewDrawingID)
 	if id := ctx.NewOtherDiscardID; id != protocol.OptypeIllegal && id >= 0 {
-		index = mahjong.IndexFromID(ctx.NewOtherDiscardID)
+		index = IndexFromID(ctx.NewOtherDiscardID)
 	}
 
-	//5,15
+	// 5,15,25
 	if index%10 != 5 {
 		return false
 	}
 
 	//默认胡5条
-	willRemoveTiles := mahjong.Indexes{4, 5, 6}
+	willRemoveTiles := Indexes{4, 5, 6}
 	if index == 15 {
-		willRemoveTiles = mahjong.Indexes{14, 15, 16}
+		willRemoveTiles = Indexes{14, 15, 16}
 	} else if index == 25 {
-		willRemoveTiles = mahjong.Indexes{24, 25, 26}
+		willRemoveTiles = Indexes{24, 25, 26}
 	}
 
 	//卡5星判断规则:
 	//胡的牌必须是5条、5同
 	//移除4,5,6 OR 14,15,16 OR 24,25,26后仍然可以和牌
 
-	marker := func(tiles mahjong.Indexes, r int) {
+	marker := func(tiles Indexes, r int) {
 		for i := 0; i < len(tiles); i++ {
 			//只移除第一个
 			if tiles[i] == r {
-				tiles[i] = mahjong.IllegalIndex
+				tiles[i] = IllegalIndex
 				return
 			}
 		}
 
 	}
 
-	temp := make(mahjong.Indexes, len(onHand))
+	temp := make(Indexes, len(onHand))
 
 	for i := 0; i < len(onHand); i++ {
 		temp[i] = onHand[i]
@@ -153,18 +153,17 @@ func isJiaxin(ctx *mahjong.Context, onHand mahjong.Indexes) bool {
 		marker(temp, t)
 	}
 
-	var tiles mahjong.Indexes
+	var tiles Indexes
 
 	for _, t := range temp {
-		if t == mahjong.IllegalIndex {
+		if t == IllegalIndex {
 			continue
-
 		}
 
 		tiles = append(tiles, t)
 	}
 
-	return IsWinWithIndexes(tiles)
+	return CheckWin(tiles)
 }
 
 func min(n byte, ns ...byte) byte {
@@ -179,8 +178,8 @@ func min(n byte, ns ...byte) byte {
 
 // 判断是不是幺九
 // 1. 排除1和9的刻字，如果有不是1和9的刻子就不可能是幺九
-func isYJ(onHand, pongkong mahjong.Indexes) bool {
-	pg := Stats(pongkong)
+func isYJ(onHand, pongkong Indexes) bool {
+	pg := NewStats(pongkong)
 	for index, count := range pg {
 		if count < 3 {
 			continue
@@ -190,7 +189,7 @@ func isYJ(onHand, pongkong mahjong.Indexes) bool {
 		}
 	}
 
-	ms := Stats(onHand)
+	ms := NewStats(onHand)
 	//println(ms.String())
 
 	// 清理顺子，如果有1就删除2/3，如果有9就删除7/8，如果剩下的对子是1/9则成功
@@ -255,7 +254,7 @@ func isYJ(onHand, pongkong mahjong.Indexes) bool {
 	return true
 }
 
-func gangCount(ms *mahjong.Stats) int {
+func gangCount(ms *Stats) int {
 	counter := 0
 	for _, v := range ms {
 		if v == 4 {
@@ -265,68 +264,37 @@ func gangCount(ms *mahjong.Stats) int {
 	return counter
 }
 
-func CanHu(onHand mahjong.Indexes, discard int) bool {
+func CanHu(onHand Indexes, discard int) bool {
 	onHand = append(onHand, discard)
-	sort.Ints(onHand)
-	return CanZimo(onHand)
-
+	return CheckWin(onHand)
 }
 
-func CanZimo(onHand mahjong.Indexes) bool {
-	ms := Stats(onHand)
-	if ok := isQiDui(ms); ok {
-		return true
-	}
-
-	return IsWinWithIndexes(onHand)
-}
-
-func IsTing(onHand mahjong.Indexes) bool {
-	for i := 0; i <= mahjong.MaxTileIndex; i++ {
+func IsTing(onHand Indexes) bool {
+	clone := make(Indexes, len(onHand)+1)
+	for i := 0; i <= MaxTileIndex; i++ {
 		if i%10 == 0 {
 			continue
 		}
-		clone := make(mahjong.Indexes, len(onHand)+1)
 		copy(clone, onHand)
 		clone[len(onHand)] = i
-
-		ms := Stats(clone)
-
-		// 7对检测
-		if ok := isQiDui(ms); ok {
+		if CheckWin(clone) {
 			return true
 		}
-
-		if IsWinWithIndexes(clone) {
-			return true
-		}
-
 	}
 	return false
 }
 
 // 传入一副牌，返回所有的听牌
-func TingTiles(onHand mahjong.Indexes) mahjong.Indexes {
-	rts := make(mahjong.Indexes, 0)
-	for i := 0; i <= mahjong.MaxTileIndex; i++ {
+func TingTiles(onHand Indexes) Indexes {
+	clone := make(Indexes, len(onHand)+1)
+	rts := make(Indexes, 0)
+	for i := 0; i <= MaxTileIndex; i++ {
 		if i%10 == 0 {
 			continue
 		}
-
-		clone := make(mahjong.Indexes, len(onHand)+1)
 		copy(clone, onHand)
 		clone[len(onHand)] = i
-
-		ms := Stats(clone)
-
-		//所有的7对检测
-
-		if ok := isQiDui(ms); ok {
-			rts = append(rts, i)
-			continue
-		}
-
-		if IsWinWithIndexes(clone) {
+		if CheckWin(clone) {
 			rts = append(rts, i)
 		}
 	}

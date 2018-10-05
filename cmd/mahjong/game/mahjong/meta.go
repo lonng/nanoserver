@@ -14,8 +14,7 @@ const (
 	MeiHu  = -2 // 没胡牌
 )
 
-type Indexes []int //麻将的index
-type Tiles []int   //麻将内部表示(即72张牌的id号列表)
+type Tiles []int //麻将内部表示(即72张牌的id号列表)
 
 func (m Tiles) Shuffle() {
 	s := rand.New(rand.NewSource(time.Now().Unix()))

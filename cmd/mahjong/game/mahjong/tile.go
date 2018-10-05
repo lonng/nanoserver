@@ -21,10 +21,8 @@ func (t *Tile) Equals(other *Tile) bool {
 	return t.Index == other.Index
 }
 
-// 21, 23, 25: 中、发、白
-//ps:此处返回的tile的id不正确
 func TileFromIndex(idx int) *Tile {
-	if idx < 0 || idx > MaxTileIndex || idx%10 == 0 || idx == 22 || idx == 24 {
+	if idx < 0 || idx > MaxTileIndex || idx%10 == 0 {
 		return nil
 	}
 
