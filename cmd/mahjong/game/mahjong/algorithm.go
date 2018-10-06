@@ -35,6 +35,7 @@ func CheckWin(indexes Indexes) bool {
 		prevIndex = indexes[i]
 		indexes.Mark(i, i+1)
 		if isLegal(indexes) {
+			indexes.Reset()
 			return true
 		}
 		indexes.Reset()
