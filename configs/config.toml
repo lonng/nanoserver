@@ -31,7 +31,7 @@ port = 3306
 dbname = "scmj"
 password = ""
 username = "root"
-args = "charset=utf8"
+args = "charset=utf8mb4"
 buf_size = 10
 max_idle_conns = 20
 max_open_conns = 15
