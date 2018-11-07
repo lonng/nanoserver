@@ -66,7 +66,8 @@ export GOPROXY=https://goproxy.io
 7. 保存游戏记录,  回放支持
 8. 房间整体流程(玩家开房/俱乐部开房/玩家邀请/解散房间)
 9. 支持WebSocket(https://github.com/lonnng/nanoserver/blob/2018aaf60b55e182f466c733dce14d95c7533e74/cmd/mahjong/game/game.go#L83)
-10. ... ...
+10. 断线重连(网络切换/强杀进程/手机异常关机)均可以恢复游戏状态.
+11. ... ...
 
 ## `Nano`文档
 
