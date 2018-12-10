@@ -7,13 +7,13 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/lonnng/nanoserver/db"
-	"github.com/lonnng/nanoserver/pkg/errutil"
-	"github.com/lonnng/nanoserver/protocol"
+	"github.com/lonng/nanoserver/db"
+	"github.com/lonng/nanoserver/pkg/errutil"
+	"github.com/lonng/nanoserver/protocol"
 
 	"github.com/gorilla/mux"
-	"github.com/lonnng/nanoserver/db/model"
-	"github.com/lonnng/nex"
+	"github.com/lonng/nanoserver/db/model"
+	"github.com/lonng/nex"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"gopkg.in/chanxuehong/wechat.v2/open/oauth2"

@@ -1,13 +1,13 @@
 package game
 
 import (
-	"github.com/lonnng/nanoserver/protocol"
+	"github.com/lonng/nanoserver/protocol"
 
-	"github.com/lonnng/nanoserver/db"
-	"github.com/lonnng/nanoserver/pkg/async"
+	"github.com/lonng/nanoserver/db"
+	"github.com/lonng/nanoserver/pkg/async"
 
-	"github.com/lonnng/nano/component"
-	"github.com/lonnng/nano/session"
+	"github.com/lonng/nano/component"
+	"github.com/lonng/nano/session"
 )
 
 type ClubManager struct {

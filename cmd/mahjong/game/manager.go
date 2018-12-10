@@ -1,13 +1,13 @@
 package game
 
 import (
-	"github.com/lonnng/nanoserver/protocol"
+	"github.com/lonng/nanoserver/protocol"
 
 	"time"
 
-	"github.com/lonnng/nano"
-	"github.com/lonnng/nano/component"
-	"github.com/lonnng/nano/session"
+	"github.com/lonng/nano"
+	"github.com/lonng/nano/component"
+	"github.com/lonng/nano/session"
 	log "github.com/sirupsen/logrus"
 )
 

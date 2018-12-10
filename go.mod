@@ -20,8 +20,8 @@ require (
 	github.com/gorilla/mux v1.6.2
 	github.com/gorilla/websocket v1.4.0 // indirect
 	github.com/lib/pq v1.0.0 // indirect
-	github.com/lonnng/nano v0.4.0
-	github.com/lonnng/nex v1.4.1
+	github.com/lonng/nano v0.4.0
+	github.com/lonng/nex v1.4.1
 	github.com/mattn/go-sqlite3 v1.9.0 // indirect
 	github.com/pborman/uuid v1.2.0
 	github.com/pkg/errors v0.8.0

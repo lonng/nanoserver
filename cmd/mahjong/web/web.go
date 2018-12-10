@@ -8,12 +8,12 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/lonnng/nanoserver/cmd/mahjong/web/api"
-	"github.com/lonnng/nanoserver/db"
-	"github.com/lonnng/nanoserver/pkg/algoutil"
-	"github.com/lonnng/nanoserver/pkg/whitelist"
-	"github.com/lonnng/nanoserver/protocol"
-	"github.com/lonnng/nex"
+	"github.com/lonng/nanoserver/cmd/mahjong/web/api"
+	"github.com/lonng/nanoserver/db"
+	"github.com/lonng/nanoserver/pkg/algoutil"
+	"github.com/lonng/nanoserver/pkg/whitelist"
+	"github.com/lonng/nanoserver/protocol"
+	"github.com/lonng/nex"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )

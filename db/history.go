@@ -1,10 +1,10 @@
 package db
 
 import (
-	"github.com/lonnng/nanoserver/pkg/errutil"
+	"github.com/lonng/nanoserver/pkg/errutil"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/lonnng/nanoserver/db/model"
+	"github.com/lonng/nanoserver/db/model"
 )
 
 func InsertHistory(h *model.History) error {

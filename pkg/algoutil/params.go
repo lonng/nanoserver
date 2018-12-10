@@ -8,7 +8,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/lonnng/nanoserver/pkg/errutil"
+	"github.com/lonng/nanoserver/pkg/errutil"
 )
 
 const (

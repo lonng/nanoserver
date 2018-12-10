@@ -3,12 +3,12 @@ package game
 import (
 	"fmt"
 
-	"github.com/lonnng/nano/session"
-	"github.com/lonnng/nanoserver/cmd/mahjong/game/mahjong"
-	"github.com/lonnng/nanoserver/db"
-	"github.com/lonnng/nanoserver/db/model"
-	"github.com/lonnng/nanoserver/pkg/async"
-	"github.com/lonnng/nanoserver/protocol"
+	"github.com/lonng/nano/session"
+	"github.com/lonng/nanoserver/cmd/mahjong/game/mahjong"
+	"github.com/lonng/nanoserver/db"
+	"github.com/lonng/nanoserver/db/model"
+	"github.com/lonng/nanoserver/pkg/async"
+	"github.com/lonng/nanoserver/protocol"
 	log "github.com/sirupsen/logrus"
 )
 

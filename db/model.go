@@ -3,7 +3,7 @@ package db
 import (
 	"time"
 
-	"github.com/lonnng/nanoserver/db/model"
+	"github.com/lonng/nanoserver/db/model"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"

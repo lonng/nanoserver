@@ -7,11 +7,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/lonnng/nanoserver/cmd/mahjong/game"
-	"github.com/lonnng/nanoserver/cmd/mahjong/web"
+	"github.com/lonng/nanoserver/cmd/mahjong/game"
+	"github.com/lonng/nanoserver/cmd/mahjong/web"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/lonnng/nano"
+	"github.com/lonng/nano"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/urfave/cli"

@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/lonnng/nano"
-	"github.com/lonnng/nano/serialize/json"
+	"github.com/lonng/nano"
+	"github.com/lonng/nano/serialize/json"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )

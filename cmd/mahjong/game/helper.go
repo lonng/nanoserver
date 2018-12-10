@@ -4,10 +4,10 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/lonnng/nanoserver/pkg/errutil"
-	"github.com/lonnng/nanoserver/protocol"
+	"github.com/lonng/nanoserver/pkg/errutil"
+	"github.com/lonng/nanoserver/protocol"
 
-	"github.com/lonnng/nano/session"
+	"github.com/lonng/nano/session"
 )
 
 const (

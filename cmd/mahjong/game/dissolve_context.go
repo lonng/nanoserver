@@ -3,10 +3,10 @@ package game
 import (
 	"time"
 
-	"github.com/lonnng/nanoserver/pkg/constant"
-	"github.com/lonnng/nanoserver/protocol"
+	"github.com/lonng/nanoserver/pkg/constant"
+	"github.com/lonng/nanoserver/protocol"
 
-	"github.com/lonnng/nano"
+	"github.com/lonng/nano"
 )
 
 // 房间解散统计
