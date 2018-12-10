@@ -66,7 +66,8 @@ export GOPROXY=https://goproxy.io
 7. 保存游戏记录,  回放支持
 8. 房间整体流程(玩家开房/俱乐部开房/玩家邀请/解散房间)
 9. 支持WebSocket(https://github.com/lonnng/nanoserver/blob/2018aaf60b55e182f466c733dce14d95c7533e74/cmd/mahjong/game/game.go#L83)
-10. ... ...
+10. 断线重连(网络切换/强杀进程/手机异常关机)均可以恢复游戏状态.
+11. ... ...
 
 ## `Nano`文档
 
@@ -83,22 +84,21 @@ export GOPROXY=https://goproxy.io
     + [通信协议](https://github.com/lonnng/nano/blob/master/docs/communication_protocol_zh_CN.md)
     + [API参考(服务器)](https://godoc.org/github.com/lonnng/nano)
 
-## 源码编译
-
-```bash
-go get github.com/lonnng/nano
-go get github.com/lonnng/nanoserver
-cd $GOPATH/src/github.com/lonnng/nanoserver/cmd/mahjong
-go build
-./mahjong
-```
-
 ## 配置
 
 - 数据库配置
 - 语音账号配置(如果有客户端)
 - 微信登录和支付配置
 - 端口配置
+
+## 源码编译
+
+```bash
+git clone git@github.com:lonnng/nanoserver.git
+cd nanoserver
+go build ./cmd/mahjong
+./mahjong
+```
 
 ## LICENSE
 MIT LICENSE
