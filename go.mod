@@ -1,4 +1,4 @@
-module github.com/lonnng/nanoserver
+module github.com/lonng/nanoserver
 
 replace (
 	golang.org/x/crypto => github.com/golang/crypto v0.0.0-20181001203147-e3636079e1a4
