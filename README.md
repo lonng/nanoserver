@@ -12,7 +12,11 @@ export GOPROXY=https://goproxy.io
 
 **申明: 本代码开源的目的在于作为`Nano`的示例用于学习, 使用者的其他行为与作者无关**
 
-**交流群(QQGroup): 289680347** [![](http://pub.idqqimg.com/wpa/images/group.png)](http://shang.qq.com/wpa/qunwpa?idkey=24e06c02d306f6559528e8434b3b54ed049628fdba4c5dcbcfe9f0e2f611cf81)
+- 微信群: 请添加群主拉群
+    
+    ![WeChat](./media/wechat.png)
+    
+- QQ**交流群(QQGroup): 289680347** [![](http://pub.idqqimg.com/wpa/images/group.png)](http://shang.qq.com/wpa/qunwpa?idkey=24e06c02d306f6559528e8434b3b54ed049628fdba4c5dcbcfe9f0e2f611cf81)
 
 四川麻将玩法, 血战到底(三人模式/四人模式)服务器程序,  房卡模式, 支持俱乐部.
 
@@ -94,10 +98,8 @@ export GOPROXY=https://goproxy.io
 ## 源码编译
 
 ```bash
-git clone git@github.com:lonnng/nanoserver.git
-cd nanoserver
-go build ./cmd/mahjong
-./mahjong
+git clone git@github.com:lonng/nanoserver.git
+go run main.go
 ```
 
 ## LICENSE

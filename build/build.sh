@@ -3,15 +3,13 @@
 export GOPROXY=https://goproxy.io
 export GOOS=linux
 export GOARCH=amd64
-export BASEDIR=$(pwd)
 
 echo "============================="
 echo "==== building"
 echo "============================="
-cd "$BASEDIR/cmd/mahjong"
-go build
+go build -o mahjong
 
-if [ $? -ne 0 ]
+if [[ $? -ne 0 ]]
 then
     echo "build failed"
     exit -1
@@ -20,15 +18,13 @@ fi
 echo "============================="
 echo "==== packaging"
 echo "============================="
-cd "$BASEDIR/cmd/mahjong"
-tar -czf mahjong.tar.gz mahjong configs web/static
+tar -czf mahjong.tar.gz mahjong configs
 
-cd $BASEDIR
 rm -rf dist
 mkdir -p dist
-mv $BASEDIR/cmd/mahjong/mahjong.tar.gz dist/
+mv mahjong.tar.gz dist/
 
 echo "============================="
 echo "==== clean"
 echo "============================="
-rm -rf "$BASEDIR/cmd/mahjong/mahjong"
+rm -rf "mahjong"
