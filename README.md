@@ -14,7 +14,7 @@ export GOPROXY=https://goproxy.io
 
 - 微信群: 请添加群主拉群
     
-    ![WeChat](./media/wechat.png)
+    <img src="./media/wechat.png" width="150">
     
 - QQ**交流群(QQGroup): 289680347** [![](http://pub.idqqimg.com/wpa/images/group.png)](http://shang.qq.com/wpa/qunwpa?idkey=24e06c02d306f6559528e8434b3b54ed049628fdba4c5dcbcfe9f0e2f611cf81)
 
