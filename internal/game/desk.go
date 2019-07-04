@@ -10,11 +10,12 @@ import (
 	"time"
 
 	"github.com/lonng/nano"
+	"github.com/lonng/nano/scheduler"
 	"github.com/lonng/nano/session"
-	"github.com/lonng/nanoserver/cmd/mahjong/game/history"
-	"github.com/lonng/nanoserver/cmd/mahjong/game/mahjong"
 	"github.com/lonng/nanoserver/db"
 	"github.com/lonng/nanoserver/db/model"
+	"github.com/lonng/nanoserver/internal/game/history"
+	"github.com/lonng/nanoserver/internal/game/mahjong"
 	"github.com/lonng/nanoserver/pkg/async"
 	"github.com/lonng/nanoserver/pkg/constant"
 	"github.com/lonng/nanoserver/pkg/errutil"
@@ -1484,7 +1485,7 @@ func (d *Desk) destroy() {
 	d.roundStats = nil
 
 	//删除桌子
-	nano.Invoke(func() {
+	scheduler.PushTask(func() {
 		defaultDeskManager.setDesk(d.roomNo, nil)
 	})
 }

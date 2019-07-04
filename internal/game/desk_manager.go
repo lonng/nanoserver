@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/lonng/nano/scheduler"
 	"github.com/lonng/nanoserver/db"
 	"github.com/lonng/nanoserver/pkg/async"
 	"github.com/lonng/nanoserver/pkg/constant"
@@ -12,7 +13,6 @@ import (
 	"github.com/lonng/nanoserver/pkg/room"
 	"github.com/lonng/nanoserver/protocol"
 
-	"github.com/lonng/nano"
 	"github.com/lonng/nano/component"
 	"github.com/lonng/nano/session"
 	"github.com/pkg/errors"
@@ -83,7 +83,7 @@ func (manager *DeskManager) AfterInit() {
 	})
 
 	// 每5分钟清空一次已摧毁的房间信息
-	nano.NewTimer(300*time.Second, func() {
+	scheduler.NewTimer(300*time.Second, func() {
 		destroyDesk := map[room.Number]*Desk{}
 		deadline := time.Now().Add(-24 * time.Hour).Unix()
 		for no, d := range manager.desks {

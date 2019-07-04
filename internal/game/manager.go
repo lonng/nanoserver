@@ -1,6 +1,7 @@
 package game
 
 import (
+	"github.com/lonng/nano/scheduler"
 	"github.com/lonng/nanoserver/protocol"
 
 	"time"
@@ -47,7 +48,7 @@ func (m *Manager) AfterInit() {
 	})
 
 	// 处理踢出玩家和重置玩家消息(来自http)
-	nano.NewTimer(time.Second, func() {
+	scheduler.NewTimer(time.Second, func() {
 	ctrl:
 		for {
 			select {

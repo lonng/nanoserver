@@ -8,7 +8,7 @@ import (
 
 func TestIndexes_Sort(t *testing.T) {
 	var indexes = Indexes{2, 3, 87, 5, 2, 2, 2, 1, 74, 29, 39, 56, 23, 91}
-	indexes.Sort()
+	Sort()
 	fmt.Printf("%+v", indexes)
 }
 
@@ -17,18 +17,18 @@ func BenchmarkIndexes_Sort(b *testing.B) {
 	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		indexes.Sort()
+		Sort()
 	}
 }
 
 func TestIndexes_MakeUsed(t *testing.T) {
 	var indexes = Indexes{2, 3, 87, 5, 2, 2, 2, 1, 74, 29, 39, 56, 23, 91}
-	indexes.Mark(5, 6, 7)
-	if u := indexes.UnmarkedCount(); u != len(indexes)-3 {
+	Mark(5, 6, 7)
+	if u := UnmarkedCount(); u != len(indexes)-3 {
 		t.Fatalf("unused: %v", u)
 	}
-	indexes.Reset()
-	if u := indexes.UnmarkedCount(); u != len(indexes) {
+	Reset()
+	if u := UnmarkedCount(); u != len(indexes) {
 		t.Fatalf("unused: %v", u)
 	}
 	if !reflect.DeepEqual(indexes, Indexes{2, 3, 87, 5, 2, 2, 2, 1, 74, 29, 39, 56, 23, 91}) {
@@ -41,13 +41,13 @@ func BenchmarkIndexes_UnusedCount(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		indexes.UnmarkedCount()
+		UnmarkedCount()
 	}
 }
 
 func TestIndexes_Unused(t *testing.T) {
 	var indexes = Indexes{2, 3, 87, 5, 2, 2, 2, 1, 74, 29, 39, 56, 23, 91}
-	var ret, count = indexes.UnmarkedSequence()
+	var ret, count = UnmarkedSequence()
 	if count != 3 {
 		t.Fatalf("unexpect count: %d", count)
 	}
@@ -55,8 +55,8 @@ func TestIndexes_Unused(t *testing.T) {
 		t.Fatalf("expece equal: %+v", ret)
 	}
 
-	indexes.Mark(1, 2)
-	ret, count = indexes.UnmarkedSequence()
+	Mark(1, 2)
+	ret, count = UnmarkedSequence()
 	if count != 3 {
 		t.Fatalf("unexpect count: %d", count)
 	}
@@ -64,8 +64,8 @@ func TestIndexes_Unused(t *testing.T) {
 		t.Fatalf("expece equal: %+v", ret)
 	}
 
-	indexes.Reset()
-	ret, count = indexes.UnmarkedSequence()
+	Reset()
+	ret, count = UnmarkedSequence()
 	if count != 3 {
 		t.Fatalf("unexpect count: %d", count)
 	}
@@ -80,11 +80,11 @@ func BenchmarkIndexes_Unused(b *testing.B) {
 		if i%2 == 0 {
 			continue
 		}
-		indexes.Mark(i)
+		Mark(i)
 	}
 	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		indexes.UnmarkedSequence()
+		UnmarkedSequence()
 	}
 }

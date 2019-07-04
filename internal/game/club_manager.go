@@ -15,7 +15,7 @@ type ClubManager struct {
 }
 
 func (c *ClubManager) ApplyClub(s *session.Session, payload *protocol.ApplyClubRequest) error {
-	mid := s.MID()
+	mid := s.LastMid()
 	logger.Debugf("玩家申请加入俱乐部，UID=%d，俱乐部ID=%d", s.UID(), payload.ClubId)
 	async.Run(func() {
 		if err := db.ApplyClub(s.UID(), payload.ClubId); err != nil {

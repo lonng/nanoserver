@@ -3,10 +3,9 @@ package game
 import (
 	"time"
 
+	"github.com/lonng/nano/scheduler"
 	"github.com/lonng/nanoserver/pkg/constant"
 	"github.com/lonng/nanoserver/protocol"
-
-	"github.com/lonng/nano"
 )
 
 // 房间解散统计
@@ -15,7 +14,7 @@ type dissolveContext struct {
 	status   map[int64]bool   //解散统计
 	desc     map[int64]string //解散描述
 	restTime int32            //解散剩余时间
-	timer    *nano.Timer      //取消解散房间
+	timer    *scheduler.Timer //取消解散房间
 	pause    map[int64]bool   //离线状态
 }
 
@@ -46,7 +45,7 @@ func (d *dissolveContext) start(restTime int32) {
 
 	//解散房间倒计时
 	d.restTime = restTime
-	d.timer = nano.NewTimer(time.Second, func() {
+	d.timer = scheduler.NewTimer(time.Second, func() {
 		if d.desk.status() == constant.DeskStatusDestory {
 			d.desk.logger.Error("解散倒计时过程中已退出")
 			d.stop()

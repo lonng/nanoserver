@@ -8,6 +8,8 @@ import (
 	"time"
 
 	"github.com/lonng/nano"
+	"github.com/lonng/nano/component"
+	"github.com/lonng/nano/pipeline"
 	"github.com/lonng/nano/serialize/json"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -45,9 +47,6 @@ func SetCardConsume(cfg string) {
 
 // Startup 初始化游戏服务器
 func Startup() {
-	// set nano logger
-	nano.SetLogger(log.WithField("component", "nano"))
-
 	rand.Seed(time.Now().Unix())
 	version = viper.GetString("update.version")
 
@@ -55,7 +54,6 @@ func Startup() {
 	if heartbeat < 5 {
 		heartbeat = 5
 	}
-	nano.SetHeartbeatInterval(time.Duration(heartbeat) * time.Second)
 
 	// 房卡消耗配置
 	csm := viper.GetString("core.consume")
@@ -66,17 +64,23 @@ func Startup() {
 	logger.Info("game service starup")
 
 	// register game handler
-	nano.Register(defaultManager)
-	nano.Register(defaultDeskManager)
-	nano.Register(new(ClubManager))
+	comps := &component.Components{}
+	comps.Register(defaultManager)
+	comps.Register(defaultDeskManager)
+	comps.Register(new(ClubManager))
 
 	// 加密管道
 	c := newCrypto()
-	pipeline := nano.NewPipeline()
-	pipeline.Inbound().PushBack(c.inbound)
-	pipeline.Outbound().PushBack(c.outbound)
+	pip := pipeline.New()
+	pip.Inbound().PushBack(c.inbound)
+	pip.Outbound().PushBack(c.outbound)
 
-	nano.SetSerializer(json.NewSerializer())
 	addr := fmt.Sprintf(":%d", viper.GetInt("game-server.port"))
-	nano.Listen(addr, nano.WithPipeline(pipeline))
+	nano.Listen(addr,
+		nano.WithPipeline(pip),
+		nano.WithHeartbeatInterval(time.Duration(heartbeat)*time.Second),
+		nano.WithLogger(log.WithField("component", "nano")),
+		nano.WithSerializer(json.NewSerializer()),
+		nano.WithComponents(comps),
+	)
 }

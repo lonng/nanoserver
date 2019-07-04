@@ -9,9 +9,9 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/lonng/nanoserver/cmd/mahjong/web/api/provider"
 	"github.com/lonng/nanoserver/db"
 	"github.com/lonng/nanoserver/db/model"
+	provider2 "github.com/lonng/nanoserver/internal/web/api/provider"
 	"github.com/lonng/nex"
 	"github.com/pborman/uuid"
 	"golang.org/x/net/context"
@@ -48,7 +48,7 @@ func CreateOrder(r *protocol.CreateOrderRequest) (interface{}, error) {
 		Os:           r.Device.OS,
 	}
 
-	resp, err := provider.Wechat.CreateOrderResponse(order)
+	resp, err := provider2.Wechat.CreateOrderResponse(order)
 	if err != nil {
 		logger.Error(err.Error())
 		return nil, err
@@ -220,7 +220,7 @@ func orderList(r *http.Request, form *nex.Form) (*protocol.OrderListResponse, er
 func WechatNotify(r *protocol.WechatOrderCallbackRequest) (resp interface{}, err error) {
 	var trade *model.Trade
 	var order *model.Order
-	if trade, resp, err = provider.Wechat.Notify(r); err != nil {
+	if trade, resp, err = provider2.Wechat.Notify(r); err != nil {
 		logger.Error(err.Error())
 		return nil, err
 	}

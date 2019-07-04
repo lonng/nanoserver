@@ -28,7 +28,7 @@ func TestCheckWin(t *testing.T) {
 
 	for _, c := range cases {
 		if r := CheckWin(c.indexes); r != c.result {
-			t.Fatalf("expect: %v, got: %v, indexes: %s", c.result, r, c.indexes.String())
+			t.Fatalf("expect: %v, got: %v, indexes: %s", c.result, r, String())
 		}
 	}
 }

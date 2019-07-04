@@ -8,8 +8,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/lonng/nanoserver/cmd/mahjong/web/api"
 	"github.com/lonng/nanoserver/db"
+	"github.com/lonng/nanoserver/internal/web/api"
 	"github.com/lonng/nanoserver/pkg/algoutil"
 	"github.com/lonng/nanoserver/pkg/whitelist"
 	"github.com/lonng/nanoserver/protocol"

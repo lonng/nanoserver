@@ -7,11 +7,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/lonng/nanoserver/cmd/mahjong/game"
-	"github.com/lonng/nanoserver/cmd/mahjong/web"
+	"github.com/lonng/nanoserver/internal/game"
+	"github.com/lonng/nanoserver/internal/web"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/lonng/nano"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/urfave/cli"
@@ -50,7 +49,6 @@ func serve(c *cli.Context) error {
 	viper.ReadInConfig()
 
 	log.SetFormatter(&log.TextFormatter{DisableColors: true})
-	nano.EnableDebug()
 	if viper.GetBool("core.debug") {
 		log.SetLevel(log.DebugLevel)
 	}

@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/lonng/nano/session"
-	"github.com/lonng/nanoserver/cmd/mahjong/game/mahjong"
 	"github.com/lonng/nanoserver/db"
 	"github.com/lonng/nanoserver/db/model"
+	"github.com/lonng/nanoserver/internal/game/mahjong"
 	"github.com/lonng/nanoserver/pkg/async"
 	"github.com/lonng/nanoserver/protocol"
 	log "github.com/sirupsen/logrus"

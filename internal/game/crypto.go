@@ -19,7 +19,7 @@ func newCrypto() *Crypto {
 	return &Crypto{xxteaKey}
 }
 
-func (c *Crypto) inbound(s *session.Session, msg nano.Message) error {
+func (c *Crypto) inbound(s *session.Session, msg *nano.Message) error {
 	out, err := base64.StdEncoding.DecodeString(string(msg.Data))
 	if err != nil {
 		logger.Errorf("Inbound Error=%s, In=%s", err.Error(), string(msg.Data))
@@ -34,7 +34,7 @@ func (c *Crypto) inbound(s *session.Session, msg nano.Message) error {
 	return nil
 }
 
-func (c *Crypto) outbound(s *session.Session, msg nano.Message) error {
+func (c *Crypto) outbound(s *session.Session, msg *nano.Message) error {
 	out := xxtea.Encrypt(msg.Data, c.key)
 	msg.Data = []byte(base64.StdEncoding.EncodeToString(out))
 	return nil
