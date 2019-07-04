@@ -13,7 +13,7 @@ require (
 	github.com/go-xorm/core v0.6.0
 	github.com/go-xorm/xorm v0.7.0
 	github.com/gorilla/mux v1.6.2
-	github.com/lonng/nano v0.4.1-0.20190704002048-26cc845e9291
+	github.com/lonng/nano v0.4.1-0.20190704005402-15209d995681
 	github.com/lonng/nex v1.4.1
 	github.com/pborman/uuid v1.2.0
 	github.com/pkg/errors v0.8.0

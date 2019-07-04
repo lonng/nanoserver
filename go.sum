@@ -73,6 +73,8 @@ github.com/lonng/nano v0.4.1-0.20190630030443-58cab7344f7c h1:/7rACJ52uWEt093m9Z
 github.com/lonng/nano v0.4.1-0.20190630030443-58cab7344f7c/go.mod h1:Jv1wM26D7266KZq8+DXk7JclLk57XTywX6P52d8yFg0=
 github.com/lonng/nano v0.4.1-0.20190704002048-26cc845e9291 h1:FxFYBOIxk3GuJNwHJiJ2eF9jAOhe53Z0LBr8q1mMwbc=
 github.com/lonng/nano v0.4.1-0.20190704002048-26cc845e9291/go.mod h1:Jv1wM26D7266KZq8+DXk7JclLk57XTywX6P52d8yFg0=
+github.com/lonng/nano v0.4.1-0.20190704005402-15209d995681 h1:nQWZH1nDmOhcGsLDBLW2+MfXSz6sQBe7CNHXkxzLOPA=
+github.com/lonng/nano v0.4.1-0.20190704005402-15209d995681/go.mod h1:Jv1wM26D7266KZq8+DXk7JclLk57XTywX6P52d8yFg0=
 github.com/lonng/nanoserver v0.0.0-20190120153900-f2a04608142e h1:tsWn0Xucgacd1rbsfaSM7p9fTHcsvYWq/bGzhS3OAh8=
 github.com/lonng/nanoserver v0.0.0-20190120153900-f2a04608142e/go.mod h1:+d23g44MfZbzQ0Fw9wDggmbUaDMzAAHoYNol3m0sAuw=
 github.com/lonng/nex v1.4.1 h1:fUwtbVQD30qNH1wQZuyqXqQlpb0S+kPc6qAhX51Ijbc=
