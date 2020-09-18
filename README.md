@@ -12,9 +12,10 @@ export GOPROXY=https://goproxy.io
 
 **申明: 本代码开源的目的在于作为`Nano`的示例用于学习, 使用者的其他行为与作者无关**
 
-- 微信群: 请添加群主拉群
-    
-    <img src="./media/wechat.png" width="150">
+- 微信群: 请扫描微信群二维码加入（如果群满，请添加群主拉群）
+
+    <img src="./media/wechat-group.jpg" width="150">
+    <img src="./media/wechat.jpg" width="150">
     
 - QQ**交流群(QQGroup): 289680347** [![](http://pub.idqqimg.com/wpa/images/group.png)](http://shang.qq.com/wpa/qunwpa?idkey=24e06c02d306f6559528e8434b3b54ed049628fdba4c5dcbcfe9f0e2f611cf81)
 
