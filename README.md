@@ -1,7 +1,3 @@
----
-typora-root-url: ../nanoserver
----
-
 # nanoserver(客户端仅用于调试)
 
 ### 运行
@@ -25,10 +21,10 @@ export GOPROXY=https://goproxy.io
 
 - iOS: https://fir.im/tios
 - Android: https://fir.im/tand
-
-如果要连接自己的服务器
- + 简单模式: 使用PC客户端/Mac客户端(不支持微信登录, 只能使用游客登录, 客户端群文件共享)
- + 困难模式: 可以反编译android的包, 然后修改appConfig.lua中的远程服务器地址, 然后重新打包就可以玩了.
+- Source Code: 微信群公告
+- Prebuilt: 如果要连接自己的服务器
+  + 简单模式: 使用PC客户端/Mac客户端(不支持微信登录, 只能使用游客登录, 客户端群文件共享)
+  + 困难模式: 可以反编译android的包, 然后修改appConfig.lua中的远程服务器地址, 然后重新打包就可以玩了.
 
 ### 游戏截图
 
