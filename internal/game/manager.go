@@ -97,11 +97,11 @@ func (m *Manager) Login(s *session.Session, req *protocol.LoginToGameServerReque
 		m.setPlayer(uid, p)
 	} else {
 		log.Infof("玩家: %d已经在线", uid)
-		// 移除广播频道
-		m.group.Leave(s)
-
 		// 重置之前的session
 		if prevSession := p.session; prevSession != nil && prevSession != s {
+			// 移除广播频道
+			m.group.Leave(prevSession)
+
 			// 如果之前房间存在，则退出来
 			if p, err := playerWithSession(prevSession); err == nil && p != nil && p.desk != nil && p.desk.group != nil {
 				p.desk.group.Leave(prevSession)
