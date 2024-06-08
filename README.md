@@ -9,6 +9,7 @@ export GOPROXY=https://goproxy.io
 **申明: 本代码开源的目的在于作为`Nano`的示例用于学习, 使用者的其他行为与作者无关**
 
 - QQ**交流群(QQGroup): 289680347**
+- Join to Discord: [Nano Community](https://discord.gg/eHEDrBH5PV) 
 
 四川麻将玩法, 血战到底(三人模式/四人模式)服务器程序,  房卡模式, 支持俱乐部.
 
